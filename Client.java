@@ -151,6 +151,7 @@ public class Client {
 		public void actionPerformed(ActionEvent e) {
 
 			// System.out.println("Setup Button pressed !");
+
 			if (state == INIT) {
 				// Init non-blocking RTPsocket that will be used to receive data
 				try {
@@ -180,7 +181,6 @@ public class Client {
 					state = READY;
 					System.out.println("New RTSP state: READY");
 				}
-
 			} // else if state != INIT then do nothing
 		}
 	}
