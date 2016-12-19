@@ -50,6 +50,7 @@ public class Server extends JFrame implements ActionListener {
 	final static int PLAY = 4;
 	final static int PAUSE = 5;
 	final static int TEARDOWN = 6;
+	final static int OPTIONS = 7;
 
 	static int state; // RTSP Server state == INIT or READY or PLAY
 	Socket RTSPsocket; // socket used to send/receive RTSP messages
@@ -210,8 +211,9 @@ public class Server extends JFrame implements ActionListener {
 
 				// send the packet as a DatagramPacket over the UDP socket
 				senddp = new DatagramPacket(packet_bits, packet_length, ClientIPAddr, RTP_dest_port);
-				package_lost_rate = 0.1;
-				if(package_lost_rate < new Random().nextFloat()) { // TODO: Anpassbare package_lost_rate Ã¼ber Slider im Interface
+				double package_lost_rate = 0.1;
+				if (package_lost_rate < new Random().nextFloat()) {
+					// TODO: Anpassbare lost_rate über Slider im Interface
 					RTPsocket.send(senddp);
 				}
 
@@ -294,10 +296,9 @@ public class Server extends JFrame implements ActionListener {
 		try {
 			RTSPBufferedWriter.write("RTSP/1.0 200 OK" + CRLF);
 			RTSPBufferedWriter.write("CSeq: " + RTSPSeqNb + CRLF);
-			if(options) {
+			if (options) {
 				RTSPBufferedWriter.write("Public: SETUP, PLAY, PAUSE, TEARDOWN" + CRLF);
-			}
-			else {
+			} else {
 				RTSPBufferedWriter.write("Session: " + RTSP_ID + CRLF);
 			}
 			RTSPBufferedWriter.flush();

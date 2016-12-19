@@ -57,6 +57,7 @@ public class Client {
 	int get = 0; // amount of packages received
 	int lost = 0; // amount of packages lost
 	int lastSequencenumber = 0; // seqnr of last package received
+	int lasttimestamp = 0;
 
 	final static String CRLF = "\r\n";
 
@@ -282,7 +283,8 @@ public class Client {
 		public void actionPerformed(ActionEvent e) {
 			send_RTSP_request("OPTIONS");
 
-			if (parse_server_response() != 200) // TODO: Check if server response parse is important
+			if (parse_server_response() != 200) // TODO: Check if server
+												// response parse is important
 				System.out.println("Invalid Server Response");
 		}
 	}
@@ -303,8 +305,8 @@ public class Client {
 
 				// create an RTPpacket object from the DP
 				RTPpacket rtp_packet = new RTPpacket(rcvdp.getData(), rcvdp.getLength());
-				
-				//TODO: if(payloadtype == 127), then break, else do the rest
+
+				// TODO: if(payloadtype == 127), then break, else do the rest
 
 				// print important header fields of the RTP packet received:
 				System.out.println("Got RTP packet with SeqNum # " + rtp_packet.getsequencenumber() + " TimeStamp "
@@ -316,15 +318,15 @@ public class Client {
 				lastSequencenumber = rtp_packet.getsequencenumber();
 				// TODO: TextField in GUI with statistics
 
-				if(rtp.gettimestamp() >= lasttimestamp + 1000) { // 
+				if (rtp_packet.gettimestamp() >= lasttimestamp + 1000) { //
 					// TODO: Update this TextField
-					lasttimestamp = rtp.gettimestamp();
+					lasttimestamp = rtp_packet.gettimestamp();
 					// übertragenen Paketen: get
 					// Paketverlusten: lost
 					// Paketverlustrate: get / (get + lost)
 					// Datenrate: get / rtp.gettimestamp()
 				}
-				
+
 				// print header bitstream:
 				rtp_packet.printheader();
 
@@ -373,7 +375,8 @@ public class Client {
 				System.out.println(SessionLine);
 
 				// if state == INIT gets the Session Id from the SessionLine
-				if(state == INIT) { // TODO: Check if state==INIT is important and why
+				if (state == INIT) { // TODO: Check if state==INIT is important
+										// and why
 					tokens = new StringTokenizer(SessionLine);
 					tokens.nextToken(); // skip over the Session:
 					RTSPid = Integer.parseInt(tokens.nextToken());

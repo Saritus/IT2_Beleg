@@ -46,7 +46,9 @@ public class RTPpacket {
 		header = new byte[HEADER_SIZE];
 
 		// fill the header array of byte with RTP header fields
-		header[0] = (byte) ((Version << 6) | (Padding << 5) | (Extension << 4) | CC); // |VVPX|CCCC| --> [1000|0000]
+		header[0] = (byte) ((Version << 6) | (Padding << 5) | (Extension << 4) | CC); // |VVPX|CCCC|
+																						// -->
+																						// [1000|0000]
 		header[1] = (byte) (PayloadType & 0x7F); // |M<--|PT->| --> [0001|1010]
 		header[2] = (byte) (SequenceNumber >> 8); // SeqNum: Highbyte-Teil
 		header[3] = (byte) (SequenceNumber & 0x00FF); // Lowbyte-Teil
