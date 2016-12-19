@@ -7,6 +7,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -59,6 +60,10 @@ public class Client {
 	int packages_lost = 0; // amount of packages lost
 	int lastSequencenumber = 0; // seqnr of last package received
 	int lasttimestamp = 0;
+	// fec
+	List<RTPpacket> RTPpackages = new ArrayList<RTPpacket>();
+	List<RTPpacket> displayPackages = new ArrayList<RTPpacket>();
+	Timer displaytimer; // timer used to display the next frame
 
 	final static String CRLF = "\r\n";
 
@@ -115,6 +120,12 @@ public class Client {
 		timer = new Timer(20, new timerListener());
 		timer.setInitialDelay(0);
 		timer.setCoalesce(true);
+
+		// init displaytimer
+		// --------------------------
+		displaytimer = new Timer(40, new displaytimerListener());
+		displaytimer.setInitialDelay(1000);
+		displaytimer.setCoalesce(true);
 
 		// allocate enough memory for the buffer used to receive data from the
 		// server
@@ -293,7 +304,7 @@ public class Client {
 	}
 
 	// ------------------------------------
-	// Handler for timer
+	// Handler for timer (receiver)
 	// ------------------------------------
 
 	class timerListener implements ActionListener {
@@ -310,7 +321,7 @@ public class Client {
 				RTPpacket rtp_packet = new RTPpacket(rcvdp.getData(), rcvdp.getLength());
 				// System.out.println(rtp_packet.PayloadType);
 
-				if (rtp_packet.PayloadType == 26) {
+				if (rtp_packet.PayloadType == 26) { // rtp
 
 					// print important header fields of the RTP packet received:
 					System.out.println("Got RTP packet with SeqNum # " + rtp_packet.getsequencenumber() + " TimeStamp "
@@ -330,6 +341,9 @@ public class Client {
 						lasttimestamp = rtp_packet.gettimestamp();
 					}
 
+					// add receveid package to ArrayList
+					RTPpackages.add(rtp_packet.getsequencenumber(), rtp_packet);
+
 					// get the payload bitstream from the RTPpacket object
 					int payload_length = rtp_packet.getpayload_length();
 					byte[] payload = new byte[payload_length];
@@ -342,12 +356,41 @@ public class Client {
 					// display the image as an ImageIcon object
 					icon = new ImageIcon(image);
 					iconLabel.setIcon(icon);
+
+				} else if (rtp_packet.PayloadType == 127) { // fec
+					// print important header fields of the RTP packet received:
+					System.out.println("Got FEC packet with SeqNum # " + rtp_packet.getsequencenumber() + " TimeStamp "
+							+ rtp_packet.gettimestamp() + " ms, of type " + rtp_packet.getpayloadtype());
+
+					// print header bitstream:
+					rtp_packet.printheader();
+
+					// TODO: FEC Check
+
+					// get missing packages in RTPpackages
+
+					// if missing==1, calculate missing package
+
+					// add rtppackages from RTPpackages to displayPackages
+
+					// reset RTPpackages
+
 				}
 			} catch (InterruptedIOException iioe) {
 				// System.out.println("Nothing to read");
 			} catch (IOException ioe) {
 				System.out.println("Exception caught: " + ioe);
 			}
+		}
+	}
+
+	// ------------------------------------
+	// Handler for timer (receiver)
+	// ------------------------------------
+
+	class displaytimerListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+
 		}
 	}
 
