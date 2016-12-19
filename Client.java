@@ -220,10 +220,9 @@ public class Client {
 		public void actionPerformed(ActionEvent e) {
 
 			// System.out.println("Pause Button pressed !");
-
 			if (state == PLAYING) {
 				// increase RTSP sequence number
-				// ........
+				RTSPSeqNb++;
 
 				// Send PAUSE message to the server
 				send_RTSP_request("PAUSE");
@@ -233,9 +232,8 @@ public class Client {
 					System.out.println("Invalid Server Response");
 				else {
 					// change RTSP state and print out new state
-					// ........
-					// System.out.println("New RTSP state: ...");
-
+					state = READY;
+					System.out.println("New RTSP state: READY");
 					// stop the timer
 					timer.stop();
 				}
