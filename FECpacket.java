@@ -1,6 +1,6 @@
 
 public class FECpacket {
-	int FEC_group // Anzahl an Medienpaketen für eine Gruppe
+	int FEC_group; // Anzahl an Medienpaketen für eine Gruppe
 	int imagenb;
 	byte[] data;
 	int data_size;
@@ -20,24 +20,24 @@ public class FECpacket {
 
 	void setGroupSize() {
 		// TODO:
-		//data = data >> 8 | k << data_size;
+		// data = data >> 8 | k << data_size;
 	}
 
 	void setdata(byte[] data, int data_length) {
 		this.data_size = data_length;
-		for(int i=0; i<data_size; i++) {
+		for (int i = 0; i < data_size; i++) {
 			this.data[i] = data[i];
 		}
 	}
 
 	void xordata(byte[] data, int data_length) { // nimmt Nutzerdaten entgegen
-		if(data_length > this.data_size) {
+		if (data_length > this.data_size) {
 			// Create new data-array
 			byte[] newdata = new byte[data_length];
 
 			// Fill the new data-array with the old data
-			for(int i=0; i<this.data_size; i++) {
-				this.newdata[i] = this.data[i];
+			for (int i = 0; i < this.data_size; i++) {
+				newdata[i] = this.data[i];
 			}
 
 			// Set newdata as this.data
@@ -45,8 +45,8 @@ public class FECpacket {
 		}
 
 		// XOR param-data-array with new data-array
-		for(int i=0; i<data_length; i++) {
-			this.data[i] = (byte)(this.data[i] ^ data[i]);
+		for (int i = 0; i < data_length; i++) {
+			this.data[i] = (byte) (this.data[i] ^ data[i]);
 		}
 	}
 
@@ -55,10 +55,10 @@ public class FECpacket {
 	}
 
 	int getdata(byte[] data) {
-		for(int i=0; i<data_size; i++) {
+		for (int i = 0; i < data_size; i++) {
 			data[i] = this.data[i];
 		}
-		
+
 		return data_size; // holt FEC-Paket (Länge -> längstes Medienpaket)
 	}
 
@@ -69,7 +69,9 @@ public class FECpacket {
 	// Empfänger
 	// getrennte Puffer für Mediendaten und FEC
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
-	void rcvdata(int nr, byte[] data, int data_length) { // UDP-Payload , Nr. des Bildes bzw. FEC-SN
+	void rcvdata(int nr, byte[] data, int data_length) { // UDP-Payload , Nr.
+															// des Bildes bzw.
+															// FEC-SN
 
 		// Save data-array to array buffer
 
@@ -85,8 +87,8 @@ public class FECpacket {
 
 	void rcvfec(int nr, byte[] data, int data_length) { // FEC-Daten
 		imagenb = nr;
-		this.data_size = data
-		
+		this.data_size = data_length;
+
 	}
 
 	byte[] getjpeg(int nr) {
