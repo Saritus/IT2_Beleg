@@ -27,6 +27,7 @@ public class Server extends JFrame implements ActionListener {
 	// GUI:
 	// ----------------
 	JLabel label;
+	JSlider discard_slider;
 
 	// Video variables:
 	// ----------------
@@ -91,6 +92,11 @@ public class Server extends JFrame implements ActionListener {
 		// GUI:
 		label = new JLabel("Send frame #        ", JLabel.CENTER);
 		getContentPane().add(label, BorderLayout.CENTER);
+		discard_slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
+		discard_slider.setMajorTickSpacing(10);
+		discard_slider.setMinorTickSpacing(5);
+		discard_slider.setPaintTicks(true);
+		getContentPane().add(discard_slider, BorderLayout.NORTH);
 	}
 
 	// ------------------------------------
@@ -211,9 +217,8 @@ public class Server extends JFrame implements ActionListener {
 
 				// send the packet as a DatagramPacket over the UDP socket
 				senddp = new DatagramPacket(packet_bits, packet_length, ClientIPAddr, RTP_dest_port);
-				double package_lost_rate = 0.5;
-				if (package_lost_rate < new Random().nextFloat()) {
-					// TODO: Anpassbare lost_rate über Slider im Interface
+
+				if (discard_slider.getValue() < (new Random().nextFloat() * 100.)) {
 					RTPsocket.send(senddp);
 				}
 
@@ -280,8 +285,8 @@ public class Server extends JFrame implements ActionListener {
 					tokens.nextToken(); // skip unused stuff
 				RTP_dest_port = Integer.parseInt(tokens.nextToken());
 			}
-			// else LastLine will be the SessionId line ... do not check for
-			// now.
+			// else LastLine will be the SessionId line
+			// ... do not check for now.
 		} catch (Exception ex) {
 			System.out.println("Exception caught: " + ex);
 			System.exit(0);
