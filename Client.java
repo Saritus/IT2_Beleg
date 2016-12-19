@@ -250,8 +250,8 @@ public class Client {
 			// System.out.println("Teardown Button pressed !");
 
 			// increase RTSP sequence number
-			// ..........
-
+			RTSPSeqNb++;
+			
 			// Send TEARDOWN message to the server
 			send_RTSP_request("TEARDOWN");
 
@@ -260,9 +260,9 @@ public class Client {
 				System.out.println("Invalid Server Response");
 			else {
 				// change RTSP state and print out new state
-				// ........
-				// System.out.println("New RTSP state: ...");
-
+				state = INIT;
+				System.out.println("New RTSP state: INIT");
+				
 				// stop the timer
 				timer.stop();
 
