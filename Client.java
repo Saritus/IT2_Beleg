@@ -141,10 +141,6 @@ public class Client {
 	// Handler for buttons
 	// ------------------------------------
 
-	// .............
-	// TO COMPLETE
-	// .............
-
 	// Handler for Setup button
 	// -----------------------
 	class setupButtonListener implements ActionListener {
