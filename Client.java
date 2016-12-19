@@ -53,6 +53,10 @@ public class Client {
 	static String VideoFileName; // video file to request to the server
 	int RTSPSeqNb = 0; // Sequence number of RTSP messages within the session
 	int RTSPid = 0; // ID of the RTSP session (given by the RTSP Server)
+	// statistics
+	int get = 0; // amount of packages received
+	int lost = 0; // amount of packages lost
+	int lastSequencenumber = 0; // seqnr of last package received
 
 	final static String CRLF = "\r\n";
 
@@ -304,6 +308,21 @@ public class Client {
 				System.out.println("Got RTP packet with SeqNum # " + rtp_packet.getsequencenumber() + " TimeStamp "
 						+ rtp_packet.gettimestamp() + " ms, of type " + rtp_packet.getpayloadtype());
 
+				// update statistics
+				get++;
+				lost += rtp_packet.getsequencenumber() - lastSequencenumber - 1;
+				lastSequencenumber = rtp_packet.getsequencenumber();
+				// TODO: TextField in GUI with statistics
+
+				if(rtp.gettimestamp() >= lasttimestamp + 1000) { // 
+					// TODO: Update this TextField
+					lasttimestamp = rtp.gettimestamp();
+					// übertragenen Paketen: get
+					// Paketverlusten: lost
+					// Paketverlustrate: get / (get + lost)
+					// Datenrate: get / rtp.gettimestamp()
+				}
+				
 				// print header bitstream:
 				rtp_packet.printheader();
 
