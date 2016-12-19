@@ -47,13 +47,10 @@ public class RTPpacket {
 
 		// fill the header array of byte with RTP header fields
 		header[0] = (byte) ((Version << 6) | (Padding << 5) | (Extension << 4) | CC); // |VVPX|CCCC|
-																						// -->
-																						// [1000|0000]
-		header[1] = (byte) (PayloadType & 0x7F); // |M<--|PT->| --> [0001|1010]
+		header[1] = (byte) ((Marker << 7) | (PayloadType & 0x7F)); // |M<--|PT->|
 		header[2] = (byte) (SequenceNumber >> 8); // SeqNum: Highbyte-Teil
 		header[3] = (byte) (SequenceNumber & 0x00FF); // Lowbyte-Teil
-		header[4] = (byte) (TimeStamp >> 24); // TimeSt. Highbyte first
-												// [xxxxxxxx|--------|--------|--------]
+		header[4] = (byte) (TimeStamp >> 24); // [xxxxxxxx|--------|--------|--------]
 		header[5] = (byte) ((TimeStamp >> 16) & 0x000000FF); // [--------|xxxxxxxx|--------|--------]
 		header[6] = (byte) ((TimeStamp >> 8) & 0x000000FF); // [--------|--------|xxxxxxxx|--------]
 		header[7] = (byte) (TimeStamp & 0x000000FF); // [--------|--------|--------|xxxxxxxx]

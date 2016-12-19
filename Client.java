@@ -54,8 +54,8 @@ public class Client {
 	int RTSPSeqNb = 0; // Sequence number of RTSP messages within the session
 	int RTSPid = 0; // ID of the RTSP session (given by the RTSP Server)
 	// statistics
-	int get = 0; // amount of packages received
-	int lost = 0; // amount of packages lost
+	int packages_received = 0; // amount of packages received
+	int packages_lost = 0; // amount of packages lost
 	int lastSequencenumber = 0; // seqnr of last package received
 	int lasttimestamp = 0;
 
@@ -313,18 +313,18 @@ public class Client {
 						+ rtp_packet.gettimestamp() + " ms, of type " + rtp_packet.getpayloadtype());
 
 				// update statistics
-				get++;
-				lost += rtp_packet.getsequencenumber() - lastSequencenumber - 1;
+				packages_received++;
+				packages_lost += rtp_packet.getsequencenumber() - lastSequencenumber - 1;
 				lastSequencenumber = rtp_packet.getsequencenumber();
 				// TODO: TextField in GUI with statistics
 
 				if (rtp_packet.gettimestamp() >= lasttimestamp + 1000) { //
 					// TODO: Update this TextField
 					lasttimestamp = rtp_packet.gettimestamp();
-					// Ã¼bertragenen Paketen: get
-					// Paketverlusten: lost
-					// Paketverlustrate: get / (get + lost)
-					// Datenrate: get / rtp.gettimestamp()
+					// Übertragenen Paketen: packages_received
+					// Paketverlusten: packages_lost
+					// Paketverlustrate: packages_received / (packages_received + packages_lost)
+					// Datenrate: packages_got / rtp.gettimestamp()
 				}
 
 				// print header bitstream:
