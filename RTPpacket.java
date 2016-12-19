@@ -109,7 +109,7 @@ public class RTPpacket {
 	}
 
 	// --------------------------
-	// getpayload: return the payload bistream of the RTPpacket and its size
+	// getpayload: return the payload bitstream of the RTPpacket and its size
 	// --------------------------
 	public int getpayload(byte[] data) {
 

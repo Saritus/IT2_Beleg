@@ -1,96 +1,81 @@
 
 public class FECpacket {
 	int FEC_group // Anzahl an Medienpaketen für eine Gruppe
-	RTPpacket fecpacket;
+	int imagenb;
+	byte[] data;
+	int data_size;
 
 	static int FEC_TYPE = 127;
+	static int FRAME_PERIOD = 40;
 
-	FECpacket(k) {
+	FECpacket(int k, int imagenumber) {
 		FEC_group = k;
-		fecpacket = new new RTPpacket(FEC_TYPE, imagenb, imagenb * FRAME_PERIOD, buf, image_length);
+		imagenb = imagenumber;
+
+		data_size = 0;
+		data = new byte[0];
 	}
 
 	// Sender
-	void setdata(byte[] data, int data_length) { // nimmt Nutzerdaten entgegen
+	void setdata(byte[] data, int data_length) {
+		this.data_size = data_length;
+		for(int i=0; i<data_size; i++) {
+			this.data[i] = data[i];
+		}
+	}
 
+	void xordata(byte[] data, int data_length) { // nimmt Nutzerdaten entgegen
+		if(data_length > this.data_size) {
+			// Create new data-array
+			byte[] newdata = new byte[data_length];
+
+			// Fill the new data-array with the old data
+			for(int i=0; i<this.data_size; i++) {
+				this.newdata[i] = this.data[i];
+			}
+
+			// Set newdata as this.data
+			this.data = newdata;
+		}
+
+		// XOR param-data-array with new data-array
+		for(int i=0; i<data_length; i++) {
+			this.data[i] = (byte)(this.data[i] ^ data[i]);
+		}
+	}
+
+	void xordata(RTPpacket rtppacket) {
+		xordata(rtppacket.payload, rtppacket.payload_size);
 	}
 
 	int getdata(byte[] data) {
-		return 0; // holt FEC-Paket (Länge -> längstes Medienpaket)
+		for(int i=0; i<data_size; i++) {
+			data[i] = this.data[i];
+		}
+		
+		return data_size; // holt FEC-Paket (Länge -> längstes Medienpaket)
+	}
 
+	RTPpacket getRTPpacket() {
+		return new RTPpacket(FEC_TYPE, imagenb, imagenb * FRAME_PERIOD, data, data_size);
 	}
 
 	// Empfänger
 	// getrennte Puffer für Mediendaten und FEC
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
-	void rcvdata(int nr, byte[] data) {
-		// UDP-Payload , Nr. des Bildes bzw. RTP-SN
+	void rcvdata(int nr, byte[] data, int data_length) {
+		// UDP-Payload , Nr. des Bildes bzw. FEC-SN
 
 	}
 
-	void rcvfec(int nr, byte[] data) { // FEC-Daten
-
+	void rcvfec(int nr, byte[] data, int data_length) { // FEC-Daten
+		imagenb = nr;
+		this.data_size = data
+		
 	}
 
 	byte[] getjpeg(int nr) {
 		return null; // Übergibt korrigiertes Paket oder Fehler (null)
 
-	}
-
-	// --------------------------
-	// getpayload: return the payload bistream of the RTPpacket and its size
-	// --------------------------
-	public int getpayload(byte[] data) {
-		return (fecpacket.getpayload(data));
-	}
-
-	// --------------------------
-	// getpayload_length: return the length of the payload
-	// --------------------------
-	public int getpayload_length() {
-		return (fecpacket.getpayload_length());
-	}
-
-	// --------------------------
-	// getlength: return the total length of the RTP packet
-	// --------------------------
-	public int getlength() {
-		return (fecpacket.getlength());
-	}
-
-	// --------------------------
-	// getpacket: returns the packet bitstream and its length
-	// --------------------------
-	public int getpacket(byte[] packet) {
-		return (fecpacket.getpacket(packet));
-	}
-
-	// --------------------------
-	// gettimestamp
-	// --------------------------
-
-	public int gettimestamp() {
-		return (fecpacket.gettimestamp());
-	}
-
-	// --------------------------
-	// getsequencenumber
-	// --------------------------
-	public int getsequencenumber() {
-		return (fecpacket.getsequencenumber());
-	}
-
-	// --------------------------
-	// getpayloadtype
-	// --------------------------
-	public int getpayloadtype() {
-		return (fecpacket.getpayloadtype());
-	}
-
-	// --------------------------
-	// print headers without the SSRC
-	// --------------------------
-	public void printheader() {
-		fecpacket.printheader();
 	}
 }
