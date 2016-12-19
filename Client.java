@@ -308,16 +308,17 @@ public class Client {
 
 				// create an RTPpacket object from the DP
 				RTPpacket rtp_packet = new RTPpacket(rcvdp.getData(), rcvdp.getLength());
-				//System.out.println(rtp_packet.PayloadType);
-
-				// print important header fields of the RTP packet received:
-				System.out.println("Got RTP packet with SeqNum # " + rtp_packet.getsequencenumber() + " TimeStamp "
-						+ rtp_packet.gettimestamp() + " ms, of type " + rtp_packet.getpayloadtype());
-
-				// print header bitstream:
-				rtp_packet.printheader();
+				// System.out.println(rtp_packet.PayloadType);
 
 				if (rtp_packet.PayloadType == 26) {
+
+					// print important header fields of the RTP packet received:
+					System.out.println("Got RTP packet with SeqNum # " + rtp_packet.getsequencenumber() + " TimeStamp "
+							+ rtp_packet.gettimestamp() + " ms, of type " + rtp_packet.getpayloadtype());
+
+					// print header bitstream:
+					rtp_packet.printheader();
+
 					// update statistics
 					packages_received++;
 					packages_lost += rtp_packet.getsequencenumber() - lastSequencenumber - 1;
