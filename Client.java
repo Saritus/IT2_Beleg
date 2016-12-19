@@ -251,7 +251,7 @@ public class Client {
 
 			// increase RTSP sequence number
 			RTSPSeqNb++;
-			
+
 			// Send TEARDOWN message to the server
 			send_RTSP_request("TEARDOWN");
 
@@ -262,7 +262,7 @@ public class Client {
 				// change RTSP state and print out new state
 				state = INIT;
 				System.out.println("New RTSP state: INIT");
-				
+
 				// stop the timer
 				timer.stop();
 
