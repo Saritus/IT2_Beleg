@@ -64,6 +64,7 @@ public class Client {
 	List<RTPpacket> RTPpackages = new ArrayList<RTPpacket>();
 	List<RTPpacket> displayPackages = new ArrayList<RTPpacket>();
 	Timer displaytimer; // timer used to display the next frame
+	int imagenumber = 1;
 
 	final static String CRLF = "\r\n";
 
@@ -352,9 +353,7 @@ public class Client {
 					}
 
 					// add receveid package to ArrayList
-					// RTPpackages.add(rtp_packet.getsequencenumber(),
-					// rtp_packet);
-					displayPackages.add(rtp_packet);
+					RTPpackages.add(rtp_packet);
 
 				} else if (rtp_packet.PayloadType == 127) { // fec
 					// print important header fields of the RTP packet received:
@@ -364,9 +363,20 @@ public class Client {
 					// print header bitstream:
 					rtp_packet.printheader();
 
-					// TODO: FEC Check
+					// create fec packet
+					FECpacket fec_packet = new FECpacket(rtp_packet);
+
+					// Check for missing FEC-packets
+					while ((RTPpackages.size() > 0)
+							&& (RTPpackages.get(0).getsequencenumber() <= fec_packet.to_frame - fec_packet.FEC_group)) {
+						displayPackages.add(RTPpackages.get(0));
+						RTPpackages.remove(0);
+					}
 
 					// get missing packages in RTPpackages
+					for (int i = 0; i < RTPpackages.size(); i++) {
+						// fec_packet
+					}
 
 					// if missing==1, calculate missing package
 
@@ -375,7 +385,9 @@ public class Client {
 					// reset RTPpackages
 
 				}
-			} catch (InterruptedIOException iioe) {
+			} catch (
+
+			InterruptedIOException iioe) {
 				// System.out.println("Nothing to read");
 			} catch (IOException ioe) {
 				System.out.println("Exception caught: " + ioe);
@@ -394,25 +406,31 @@ public class Client {
 				// get the next frame package
 				RTPpacket rtp_packet = displayPackages.get(0);
 
-				// get the payload bitstream from the RTPpacket object
-				int payload_length = rtp_packet.getpayload_length();
-				byte[] payload = new byte[payload_length];
-				rtp_packet.getpayload(payload);
+				if (imagenumber == rtp_packet.getsequencenumber()) {
 
-				// get an Image object from the payload bitstream
-				Toolkit toolkit = Toolkit.getDefaultToolkit();
-				Image image = toolkit.createImage(payload, 0, payload_length);
+					// get the payload bitstream from the RTPpacket object
+					int payload_length = rtp_packet.getpayload_length();
+					byte[] payload = new byte[payload_length];
+					rtp_packet.getpayload(payload);
 
-				// display the image as an ImageIcon object
-				icon = new ImageIcon(image);
-				iconLabel.setIcon(icon);
+					// get an Image object from the payload bitstream
+					Toolkit toolkit = Toolkit.getDefaultToolkit();
+					Image image = toolkit.createImage(payload, 0, payload_length);
 
-				// remove the displayed package
-				displayPackages.remove(0);
+					// display the image as an ImageIcon object
+					icon = new ImageIcon(image);
+					iconLabel.setIcon(icon);
+
+					// remove the displayed package
+					displayPackages.remove(0);
+				}
+				imagenumber++;
+
 			} catch (IndexOutOfBoundsException ioobe) {
 				// No new frame to show
 			}
 		}
+
 	}
 
 	// ------------------------------------
@@ -486,8 +504,10 @@ public class Client {
 			// write the CSeq line:
 			RTSPBufferedWriter.write("CSeq: " + RTSPSeqNb + CRLF);
 
-			// check if request_type is equal to "SETUP" and in this case write
-			// the Transport: line advertising to the server the port used to
+			// check if request_type is equal to "SETUP" and in this case
+			// write
+			// the Transport: line advertising to the server the port used
+			// to
 			// receive the RTP packets RTP_RCV_PORT
 			if ((request_type).compareTo("SETUP") == 0) {
 				RTSPBufferedWriter.write("Transport: RTP/UDP; client_port= " + RTP_RCV_PORT + CRLF);
