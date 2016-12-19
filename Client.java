@@ -23,9 +23,10 @@ public class Client {
 	JButton tearButton = new JButton("Teardown");
 	JButton optionsButton = new JButton("Options");
 
-	JPanel mainPanel = new JPanel();
-	JPanel buttonPanel = new JPanel();
-	JLabel iconLabel = new JLabel();
+	JPanel mainPanel = new JPanel(); // programm
+	JPanel buttonPanel = new JPanel(); // control buttons
+	JLabel iconLabel = new JLabel(); // video
+	JLabel statistic = new JLabel(); // statistic output
 	ImageIcon icon;
 
 	// RTP variables:
@@ -100,11 +101,13 @@ public class Client {
 		mainPanel.setLayout(null);
 		mainPanel.add(iconLabel);
 		mainPanel.add(buttonPanel);
-		iconLabel.setBounds(0, 0, 380, 280);
-		buttonPanel.setBounds(0, 280, 380, 50);
+		mainPanel.add(statistic);
+		iconLabel.setBounds(68, 0, 380, 280);
+		buttonPanel.setBounds(0, 280, 500, 50);
+		statistic.setBounds(0, 330, 500, 100);
 
 		f.getContentPane().add(mainPanel, BorderLayout.CENTER);
-		f.setSize(new Dimension(390, 370));
+		f.setSize(new Dimension(516, 469));
 		f.setVisible(true);
 
 		// init timer
@@ -319,12 +322,8 @@ public class Client {
 				// TODO: TextField in GUI with statistics
 
 				if (rtp_packet.gettimestamp() >= lasttimestamp + 1000) { //
-					// TODO: Update this TextField
+					print_statistic(packages_received, packages_lost, rtp_packet.gettimestamp());
 					lasttimestamp = rtp_packet.gettimestamp();
-					// Übertragenen Paketen: packages_received
-					// Paketverlusten: packages_lost
-					// Paketverlustrate: packages_received / (packages_received + packages_lost)
-					// Datenrate: packages_got / rtp.gettimestamp()
 				}
 
 				// print header bitstream:
@@ -375,8 +374,8 @@ public class Client {
 				System.out.println(SessionLine);
 
 				// if state == INIT gets the Session Id from the SessionLine
-				if (state == INIT) { // TODO: Check if state==INIT is important
-										// and why
+				if (state == INIT) {
+					// TODO: Check if state==INIT is important and why
 					tokens = new StringTokenizer(SessionLine);
 					tokens.nextToken(); // skip over the Session:
 					RTSPid = Integer.parseInt(tokens.nextToken());
@@ -388,6 +387,24 @@ public class Client {
 		}
 
 		return (reply_code);
+	}
+
+	public void print_statistic(int packages_received, int packages_lost, int gettimestamp) {
+		// Übertragenen Paketen: packages_received
+		// Paketverlusten: packages_lost
+		// Paketverlustrate: packages_received / (packages_received
+		// + packages_lost)
+		// Datenrate: packages_got / rtp.gettimestamp()
+
+		double package_loss_rate = 100. * (double) (packages_lost) / (packages_received + packages_lost);
+		double package_rate = 1000. * (double) (packages_received) / gettimestamp;
+
+		String output = "";
+		output += String.format("Übertragenen Pakete: %d<br>", packages_received);
+		output += String.format("Verlorene Pakete: %d<br>", packages_lost);
+		output += String.format("Paketverlustrate: %.2f%%<br>", package_loss_rate);
+		output += String.format("Datenrate: %.2f Pakete/s<br>", package_rate);
+		statistic.setText("<html>" + output + "</html>");
 	}
 
 	// ------------------------------------
