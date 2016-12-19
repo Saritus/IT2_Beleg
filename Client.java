@@ -21,6 +21,8 @@ public class Client {
 	JButton playButton = new JButton("Play");
 	JButton pauseButton = new JButton("Pause");
 	JButton tearButton = new JButton("Teardown");
+	JButton optionsButton = new JButton("Options");
+
 	JPanel mainPanel = new JPanel();
 	JPanel buttonPanel = new JPanel();
 	JLabel iconLabel = new JLabel();
@@ -79,10 +81,12 @@ public class Client {
 		buttonPanel.add(playButton);
 		buttonPanel.add(pauseButton);
 		buttonPanel.add(tearButton);
+		buttonPanel.add(optionsButton);
 		setupButton.addActionListener(new setupButtonListener());
 		playButton.addActionListener(new playButtonListener());
 		pauseButton.addActionListener(new pauseButtonListener());
 		tearButton.addActionListener(new tearButtonListener());
+		optionsButton.addActionListener(new optionsButtonListener());
 
 		// Image display label
 		iconLabel.setIcon(null);
@@ -268,6 +272,17 @@ public class Client {
 		}
 	}
 
+	// Handler for Options button
+	// -----------------------
+	class optionsButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			send_RTSP_request("OPTIONS");
+
+			if (parse_server_response() != 200) // TODO: Check if server response parse is important
+				System.out.println("Invalid Server Response");
+		}
+	}
+
 	// ------------------------------------
 	// Handler for timer
 	// ------------------------------------
@@ -337,9 +352,11 @@ public class Client {
 				System.out.println(SessionLine);
 
 				// if state == INIT gets the Session Id from the SessionLine
-				tokens = new StringTokenizer(SessionLine);
-				tokens.nextToken(); // skip over the Session:
-				RTSPid = Integer.parseInt(tokens.nextToken());
+				if(state == INIT) { // TODO: Check if state==INIT is important and why
+					tokens = new StringTokenizer(SessionLine);
+					tokens.nextToken(); // skip over the Session:
+					RTSPid = Integer.parseInt(tokens.nextToken());
+				}
 			}
 		} catch (Exception ex) {
 			System.out.println("Exception caught: " + ex);

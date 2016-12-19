@@ -7,19 +7,19 @@ class FECpacket {
 	}
 
 	int getdata(byte[] data) {
-		return 0; // holt FEC−Paket (Länge −> längstes Medienpaket)
+		return 0; // holt FEC-Paket (L�nge -> l�ngstes Medienpaket)
 
 	}
 
 	// Empfänger
-	// getrennte Puffer für Mediendaten und FEC
+	// getrennte Puffer f�r Mediendaten und FEC
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
 	void rcvdata(int nr, byte[] data) {
-		// UDP−Payload , Nr. des Bildes bzw. RTP−SN
+		// UDP-Payload , Nr. des Bildes bzw. RTP-SN
 
 	}
 
-	void rcvfec(int nr, byte[] data) { // FEC−Daten
+	void rcvfec(int nr, byte[] data) { // FEC-Daten
 
 	}
 
