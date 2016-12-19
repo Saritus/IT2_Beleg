@@ -66,9 +66,9 @@ public class FECpacket {
 	RTPpacket createRTPpacket(int imagenb) {
 		byte[] fecdata = new byte[data_size + 1];
 
-		// sourcearray, sourceindex, targetarray, targetindex, length
-		System.arraycopy(FEC_group, 0, fecdata, 0, 1);
+		fecdata[0] = (byte) FEC_group;
 		System.arraycopy(data, 0, fecdata, 1, data_size);
+		// sourcearray, sourceindex, targetarray, targetindex, length
 
 		return new RTPpacket(FEC_TYPE, imagenb, imagenb * FRAME_PERIOD, fecdata, data_size);
 	}
