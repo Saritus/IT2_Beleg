@@ -46,19 +46,19 @@ public class RTPpacket {
 		header = new byte[HEADER_SIZE];
 
 		// fill the header array of byte with RTP header fields
-		header[0] = (byte) ((Version << 6)); // |VVPX|CCCC| --> [1000|0000]
+		header[0] = (byte) ((Version << 6) | (Padding << 5) | (Extension << 4) | CC); // |VVPX|CCCC| --> [1000|0000]
 		header[1] = (byte) (PayloadType & 0x7F); // |M<--|PT->| --> [0001|1010]
 		header[2] = (byte) (SequenceNumber >> 8); // SeqNum: Highbyte-Teil
-		header[3] = (byte) (SequenceNumber); // Lowbyte-Teil
+		header[3] = (byte) (SequenceNumber & 0x00FF); // Lowbyte-Teil
 		header[4] = (byte) (TimeStamp >> 24); // TimeSt. Highbyte first
 												// [xxxxxxxx|--------|--------|--------]
-		header[5] = (byte) (TimeStamp >> 16); // [--------|xxxxxxxx|--------|--------]
-		header[6] = (byte) (TimeStamp >> 8); // [--------|--------|xxxxxxxx|--------]
-		header[7] = (byte) (TimeStamp); // [--------|--------|--------|xxxxxxxx]
+		header[5] = (byte) ((TimeStamp >> 16) & 0x000000FF); // [--------|xxxxxxxx|--------|--------]
+		header[6] = (byte) ((TimeStamp >> 8) & 0x000000FF); // [--------|--------|xxxxxxxx|--------]
+		header[7] = (byte) (TimeStamp & 0x000000FF); // [--------|--------|--------|xxxxxxxx]
 		header[8] = (byte) (Ssrc >> 24); // Ssrc same as Timestamp
-		header[9] = (byte) (Ssrc >> 16);
-		header[10] = (byte) (Ssrc >> 8);
-		header[11] = (byte) (Ssrc);
+		header[9] = (byte) ((Ssrc >> 16) & 0x000000FF);
+		header[10] = (byte) ((Ssrc >> 8) & 0x000000FF);
+		header[11] = (byte) (Ssrc & 0x000000FF);
 
 		// fill the payload bitstream:
 		// --------------------------
