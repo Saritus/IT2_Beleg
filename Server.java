@@ -62,6 +62,10 @@ public class Server extends JFrame implements ActionListener {
 	static int RTSP_ID = 123456; // ID of the RTSP session
 	int RTSPSeqNb = 0; // Sequence number of RTSP messages within the session
 
+	// FEC
+	FECpacket fecpacket;
+	int k = 20;
+
 	final static String CRLF = "\r\n";
 
 	// --------------------------------
@@ -79,6 +83,9 @@ public class Server extends JFrame implements ActionListener {
 
 		// allocate memory for the sending buffer
 		buf = new byte[15000];
+
+		// create first fecpacket
+		fecpacket = new FECpacket(k);
 
 		// Handler to close the main window
 		addWindowListener(new WindowAdapter() {
@@ -220,6 +227,25 @@ public class Server extends JFrame implements ActionListener {
 
 				if (discard_slider.getValue() < (new Random().nextFloat() * 100.)) {
 					RTPsocket.send(senddp);
+				}
+
+				// FECpacket
+				fecpacket.xordata(rtp_packet);
+				if (fecpacket.packages == k) {
+					// Create RTPpacket from FECpacket
+					RTPpacket fec_packet = fecpacket.createRTPpacket(imagenb);
+
+					// Get data from RTPpacket
+					int fec_length = fec_packet.getlength();
+					byte[] fec_bits = new byte[fec_length];
+					fec_packet.getpacket(fec_bits);
+
+					// Send RTPpacket
+					senddp = new DatagramPacket(fec_bits, fec_length, ClientIPAddr, RTP_dest_port);
+					RTPsocket.send(senddp);
+
+					// Create new FECpacket
+					fecpacket = new FECpacket(k);
 				}
 
 				// System.out.println("Send frame #"+imagenb);
