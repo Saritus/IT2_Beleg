@@ -1,3 +1,4 @@
+import java.util.*;
 
 public class FECpacket {
 	int FEC_group; // Anzahl an Medienpaketen für eine Gruppe
@@ -5,6 +6,8 @@ public class FECpacket {
 	int data_size;
 	int packages;
 	int to_frame;
+	List<Integer> rtp_nrs = new ArrayList<Integer>();
+	List<RTPpacket> rtp_list = new ArrayList<RTPpacket>();
 
 	static int FEC_TYPE = 127;
 	static int FRAME_PERIOD = 40;
@@ -18,13 +21,8 @@ public class FECpacket {
 		to_frame = 0;
 	}
 
-	FECpacket(RTPpacket rtp) {
-		FEC_group = rtp.payload[0];
-		packages = 0;
-
-		data_size = rtp.getpayload_length();
-		data = java.util.Arrays.copyOfRange(rtp.payload, 1, rtp.payload_size);
-		to_frame = rtp.getsequencenumber();
+	FECpacket() {
+		this(0);
 	}
 
 	// Sender
@@ -87,29 +85,57 @@ public class FECpacket {
 	// Empfänger
 	// getrennte Puffer für Mediendaten und FEC
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
-	void rcvdata(int nr, byte[] data, int data_length) {
-		// UDP-Payload , Nr. des Bildes bzw. FEC-SN
-
-		// Save data-array to array buffer
-
-		// If array buffer is full, check if every package is filled
-
-		// Else fill the empty data array slots
-
-	}
-
 	void rcvdata(RTPpacket rtppacket) {
-		rcvdata(rtppacket.SequenceNumber, rtppacket.payload, rtppacket.payload_size);
+		rtp_nrs.add(rtppacket.getsequencenumber());
+		rtp_list.add(rtppacket);
 	}
 
-	void rcvfec(int nr, byte[] data, int data_length) { // FEC-Daten
-		// imagenb = nr;
-		this.data_size = data_length;
+	int get_missing() {
+		if (rtp_nrs.size() == FEC_group) {
+			return -1;
+		} else if (rtp_nrs.size() == FEC_group - 1) {
+			// return missing
+			return 0;
 
+		} else {
+			return -1;
+		}
+	}
+
+	void rcvfec(RTPpacket rtp) {
+		System.out.println(rtp.getsequencenumber());
+		// TODO: rtp.payload.length is 0
+		// FEC_group = rtp.payload[0];
+
+		data_size = rtp.getpayload_length();
+		// data = java.util.Arrays.copyOfRange(rtp.payload, 1,
+		// rtp.payload_size);
+		to_frame = rtp.getsequencenumber();
 	}
 
 	byte[] getjpeg(int nr) {
 		return null; // Übergibt korrigiertes Paket oder Fehler (null)
 
+	}
+
+	List<RTPpacket> get_rtp_packets() {
+		/*
+		 * // Check for missing FEC-packets while ((RTPpackages.size() > 0) &&
+		 * (RTPpackages.get(0).getsequencenumber() <= fec_packet.to_frame -
+		 * fec_packet.FEC_group)) { displayPackages.add(RTPpackages.get(0));
+		 * RTPpackages.remove(0); }
+		 * 
+		 * // get missing packages in RTPpackages for (int i = 0; i <
+		 * RTPpackages.size(); i++) { // fec_packet }
+		 * 
+		 * // if missing==1, calculate missing package
+		 * 
+		 * // add rtppackages from RTPpackages to displayPackages
+		 * 
+		 * // reset RTPpackages
+		 * 
+		 */
+
+		return rtp_list;
 	}
 }

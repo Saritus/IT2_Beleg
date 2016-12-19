@@ -61,7 +61,7 @@ public class Client {
 	int lastSequencenumber = 0; // seqnr of last package received
 	int lasttimestamp = 0;
 	// fec
-	List<RTPpacket> RTPpackages = new ArrayList<RTPpacket>();
+	FECpacket fec_packet = new FECpacket();
 	List<RTPpacket> displayPackages = new ArrayList<RTPpacket>();
 	Timer displaytimer; // timer used to display the next frame
 	int imagenumber = 1;
@@ -308,8 +308,8 @@ public class Client {
 		public void actionPerformed(ActionEvent e) {
 			send_RTSP_request("OPTIONS");
 
-			if (parse_server_response() != 200) // TODO: Check if server
-												// response parse is important
+			if (parse_server_response() != 200)
+				// TODO: Check if server response parse is important
 				System.out.println("Invalid Server Response");
 		}
 	}
@@ -353,7 +353,7 @@ public class Client {
 					}
 
 					// add receveid package to ArrayList
-					RTPpackages.add(rtp_packet);
+					fec_packet.rcvdata(rtp_packet);
 
 				} else if (rtp_packet.PayloadType == 127) { // fec
 					// print important header fields of the RTP packet received:
@@ -363,31 +363,16 @@ public class Client {
 					// print header bitstream:
 					rtp_packet.printheader();
 
-					// create fec packet
-					FECpacket fec_packet = new FECpacket(rtp_packet);
+					// add fec packet information
+					fec_packet.rcvfec(rtp_packet);
 
-					// Check for missing FEC-packets
-					while ((RTPpackages.size() > 0)
-							&& (RTPpackages.get(0).getsequencenumber() <= fec_packet.to_frame - fec_packet.FEC_group)) {
-						displayPackages.add(RTPpackages.get(0));
-						RTPpackages.remove(0);
-					}
+					// add all stored packages to displayList
+					displayPackages.addAll(fec_packet.get_rtp_packets());
 
-					// get missing packages in RTPpackages
-					for (int i = 0; i < RTPpackages.size(); i++) {
-						// fec_packet
-					}
-
-					// if missing==1, calculate missing package
-
-					// add rtppackages from RTPpackages to displayPackages
-
-					// reset RTPpackages
-
+					// reset fec_packet
+					fec_packet = new FECpacket();
 				}
-			} catch (
-
-			InterruptedIOException iioe) {
+			} catch (InterruptedIOException iioe) {
 				// System.out.println("Nothing to read");
 			} catch (IOException ioe) {
 				System.out.println("Exception caught: " + ioe);
@@ -396,7 +381,7 @@ public class Client {
 	}
 
 	// ------------------------------------
-	// Handler for timer (receiver)
+	// Handler for timer (display)
 	// ------------------------------------
 
 	class displaytimerListener implements ActionListener {
