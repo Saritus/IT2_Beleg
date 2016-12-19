@@ -17,6 +17,12 @@ public class FECpacket {
 	}
 
 	// Sender
+
+	void setGroupSize() {
+		// TODO:
+		//data = data >> 8 | k << data_size;
+	}
+
 	void setdata(byte[] data, int data_length) {
 		this.data_size = data_length;
 		for(int i=0; i<data_size; i++) {
@@ -56,16 +62,25 @@ public class FECpacket {
 		return data_size; // holt FEC-Paket (Länge -> längstes Medienpaket)
 	}
 
-	RTPpacket getRTPpacket() {
+	RTPpacket createRTPpacket() {
 		return new RTPpacket(FEC_TYPE, imagenb, imagenb * FRAME_PERIOD, data, data_size);
 	}
 
 	// Empfänger
 	// getrennte Puffer für Mediendaten und FEC
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
-	void rcvdata(int nr, byte[] data, int data_length) {
-		// UDP-Payload , Nr. des Bildes bzw. FEC-SN
+	void rcvdata(int nr, byte[] data, int data_length) { // UDP-Payload , Nr. des Bildes bzw. FEC-SN
 
+		// Save data-array to array buffer
+
+		// If array buffer is full, check if every package is filled
+
+		// Else fill the empty data array slots
+
+	}
+
+	void rcvdata(RTPpacket rtppacket) {
+		rcvdata(rtppacket.SequenceNumber, rtppacket.payload, rtppacket.payload_size);
 	}
 
 	void rcvfec(int nr, byte[] data, int data_length) { // FEC-Daten
