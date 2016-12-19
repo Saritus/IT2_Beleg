@@ -1,16 +1,16 @@
 
 public class FECpacket {
 	int FEC_group; // Anzahl an Medienpaketen für eine Gruppe
-	int imagenb;
 	byte[] data;
 	int data_size;
+	int packages;
 
 	static int FEC_TYPE = 127;
 	static int FRAME_PERIOD = 40;
 
-	FECpacket(int k, int imagenumber) {
+	FECpacket(int k) {
 		FEC_group = k;
-		imagenb = imagenumber;
+		packages = 0;
 
 		data_size = 0;
 		data = new byte[0];
@@ -48,6 +48,7 @@ public class FECpacket {
 		for (int i = 0; i < data_length; i++) {
 			this.data[i] = (byte) (this.data[i] ^ data[i]);
 		}
+		packages++;
 	}
 
 	void xordata(RTPpacket rtppacket) {
@@ -62,7 +63,7 @@ public class FECpacket {
 		return data_size; // holt FEC-Paket (Länge -> längstes Medienpaket)
 	}
 
-	RTPpacket createRTPpacket() {
+	RTPpacket createRTPpacket(int imagenb) {
 		return new RTPpacket(FEC_TYPE, imagenb, imagenb * FRAME_PERIOD, data, data_size);
 	}
 
@@ -86,7 +87,7 @@ public class FECpacket {
 	}
 
 	void rcvfec(int nr, byte[] data, int data_length) { // FEC-Daten
-		imagenb = nr;
+		// imagenb = nr;
 		this.data_size = data_length;
 
 	}
