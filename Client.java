@@ -124,7 +124,7 @@ public class Client {
 		// init displaytimer
 		// --------------------------
 		displaytimer = new Timer(40, new displaytimerListener());
-		displaytimer.setInitialDelay(1000);
+		displaytimer.setInitialDelay(0);
 		displaytimer.setCoalesce(true);
 
 		// allocate enough memory for the buffer used to receive data from the
@@ -228,6 +228,9 @@ public class Client {
 
 					// start the timer
 					timer.start();
+
+					// start the displaytimer
+					displaytimer.start();
 				}
 			} // else if state != READY then do nothing
 		}
@@ -253,8 +256,12 @@ public class Client {
 					// change RTSP state and print out new state
 					state = READY;
 					System.out.println("New RTSP state: READY");
+
 					// stop the timer
 					timer.stop();
+
+					// stop the displaytimer
+					displaytimer.stop();
 				}
 			}
 			// else if state != PLAYING then do nothing
@@ -284,6 +291,9 @@ public class Client {
 
 				// stop the timer
 				timer.stop();
+
+				// stop the displaytimer
+				displaytimer.stop();
 
 				// exit
 				System.exit(0);
@@ -342,20 +352,9 @@ public class Client {
 					}
 
 					// add receveid package to ArrayList
-					RTPpackages.add(rtp_packet.getsequencenumber(), rtp_packet);
-
-					// get the payload bitstream from the RTPpacket object
-					int payload_length = rtp_packet.getpayload_length();
-					byte[] payload = new byte[payload_length];
-					rtp_packet.getpayload(payload);
-
-					// get an Image object from the payload bitstream
-					Toolkit toolkit = Toolkit.getDefaultToolkit();
-					Image image = toolkit.createImage(payload, 0, payload_length);
-
-					// display the image as an ImageIcon object
-					icon = new ImageIcon(image);
-					iconLabel.setIcon(icon);
+					// RTPpackages.add(rtp_packet.getsequencenumber(),
+					// rtp_packet);
+					displayPackages.add(rtp_packet);
 
 				} else if (rtp_packet.PayloadType == 127) { // fec
 					// print important header fields of the RTP packet received:
@@ -391,6 +390,28 @@ public class Client {
 	class displaytimerListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 
+			try {
+				// get the next frame package
+				RTPpacket rtp_packet = displayPackages.get(0);
+
+				// get the payload bitstream from the RTPpacket object
+				int payload_length = rtp_packet.getpayload_length();
+				byte[] payload = new byte[payload_length];
+				rtp_packet.getpayload(payload);
+
+				// get an Image object from the payload bitstream
+				Toolkit toolkit = Toolkit.getDefaultToolkit();
+				Image image = toolkit.createImage(payload, 0, payload_length);
+
+				// display the image as an ImageIcon object
+				icon = new ImageIcon(image);
+				iconLabel.setIcon(icon);
+
+				// remove the displayed package
+				displayPackages.remove(0);
+			} catch (IndexOutOfBoundsException ioobe) {
+				// No new frame to show
+			}
 		}
 	}
 
