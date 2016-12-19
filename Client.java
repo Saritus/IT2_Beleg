@@ -308,39 +308,40 @@ public class Client {
 
 				// create an RTPpacket object from the DP
 				RTPpacket rtp_packet = new RTPpacket(rcvdp.getData(), rcvdp.getLength());
-
-				// TODO: if(payloadtype == 127), then break, else do the rest
+				//System.out.println(rtp_packet.PayloadType);
 
 				// print important header fields of the RTP packet received:
 				System.out.println("Got RTP packet with SeqNum # " + rtp_packet.getsequencenumber() + " TimeStamp "
 						+ rtp_packet.gettimestamp() + " ms, of type " + rtp_packet.getpayloadtype());
 
-				// update statistics
-				packages_received++;
-				packages_lost += rtp_packet.getsequencenumber() - lastSequencenumber - 1;
-				lastSequencenumber = rtp_packet.getsequencenumber();
-				// TODO: TextField in GUI with statistics
-
-				if (rtp_packet.gettimestamp() >= lasttimestamp + 1000) { //
-					print_statistic(packages_received, packages_lost, rtp_packet.gettimestamp());
-					lasttimestamp = rtp_packet.gettimestamp();
-				}
-
 				// print header bitstream:
 				rtp_packet.printheader();
 
-				// get the payload bitstream from the RTPpacket object
-				int payload_length = rtp_packet.getpayload_length();
-				byte[] payload = new byte[payload_length];
-				rtp_packet.getpayload(payload);
+				if (rtp_packet.PayloadType == 26) {
+					// update statistics
+					packages_received++;
+					packages_lost += rtp_packet.getsequencenumber() - lastSequencenumber - 1;
+					lastSequencenumber = rtp_packet.getsequencenumber();
 
-				// get an Image object from the payload bitstream
-				Toolkit toolkit = Toolkit.getDefaultToolkit();
-				Image image = toolkit.createImage(payload, 0, payload_length);
+					// print statistics
+					if (rtp_packet.gettimestamp() >= lasttimestamp + 10) { //
+						print_statistic(packages_received, packages_lost, rtp_packet.gettimestamp());
+						lasttimestamp = rtp_packet.gettimestamp();
+					}
 
-				// display the image as an ImageIcon object
-				icon = new ImageIcon(image);
-				iconLabel.setIcon(icon);
+					// get the payload bitstream from the RTPpacket object
+					int payload_length = rtp_packet.getpayload_length();
+					byte[] payload = new byte[payload_length];
+					rtp_packet.getpayload(payload);
+
+					// get an Image object from the payload bitstream
+					Toolkit toolkit = Toolkit.getDefaultToolkit();
+					Image image = toolkit.createImage(payload, 0, payload_length);
+
+					// display the image as an ImageIcon object
+					icon = new ImageIcon(image);
+					iconLabel.setIcon(icon);
+				}
 			} catch (InterruptedIOException iioe) {
 				// System.out.println("Nothing to read");
 			} catch (IOException ioe) {
