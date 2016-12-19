@@ -4,6 +4,7 @@ public class FECpacket {
 	byte[] data;
 	int data_size;
 	int packages;
+	int to_frame;
 
 	static int FEC_TYPE = 127;
 	static int FRAME_PERIOD = 40;
@@ -14,6 +15,16 @@ public class FECpacket {
 
 		data_size = 0;
 		data = new byte[0];
+		to_frame = 0;
+	}
+
+	FECpacket(RTPpacket rtp) {
+		FEC_group = rtp.payload[0];
+		packages = 0;
+
+		data_size = rtp.getpayload_length();
+		data = java.util.Arrays.copyOfRange(rtp.payload, 1, rtp.payload_size);
+		to_frame = rtp.getsequencenumber();
 	}
 
 	// Sender
@@ -76,9 +87,8 @@ public class FECpacket {
 	// Empfänger
 	// getrennte Puffer für Mediendaten und FEC
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
-	void rcvdata(int nr, byte[] data, int data_length) { // UDP-Payload , Nr.
-															// des Bildes bzw.
-															// FEC-SN
+	void rcvdata(int nr, byte[] data, int data_length) {
+		// UDP-Payload , Nr. des Bildes bzw. FEC-SN
 
 		// Save data-array to array buffer
 
