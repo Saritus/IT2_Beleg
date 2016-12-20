@@ -64,7 +64,7 @@ public class Server extends JFrame implements ActionListener {
 
 	// FEC
 	FECpacket fecpacket;
-	int k = 20;
+	int k = 2;
 
 	final static String CRLF = "\r\n";
 
@@ -213,6 +213,7 @@ public class Server extends JFrame implements ActionListener {
 
 				// Builds an RTPpacket object containing the frame
 				RTPpacket rtp_packet = new RTPpacket(MJPEG_TYPE, imagenb, imagenb * FRAME_PERIOD, buf, image_length);
+				System.out.println(rtp_packet.payload.length);
 
 				// get to total length of the full rtp packet to send
 				int packet_length = rtp_packet.getlength();

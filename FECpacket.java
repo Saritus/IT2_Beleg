@@ -91,18 +91,24 @@ public class FECpacket {
 		rtp_nrs.add(rtppacket.getsequencenumber());
 		rtp_list.add(rtppacket);
 		packages++;
+		xordata(rtppacket);
 	}
 
-	int get_missing() {
-		if (rtp_nrs.size() == FEC_group) {
-			return -1;
-		} else if (rtp_nrs.size() == FEC_group - 1) {
-			// return missing
-			return 0;
-
-		} else {
-			return -1;
+	int get_missing_nr() {
+		int next = this.to_frame - this.FEC_group;
+		for (int i = 0; i < rtp_nrs.size(); i++) {
+			if (rtp_nrs.get(i) == next + 1) {
+				next = rtp_nrs.get(i);
+			} else {
+				return next + 1;
+			}
 		}
+		System.err.println("Kein fehlendes Packet gefunden");
+		return -1;
+	}
+
+	byte[] get_missing_data() {
+		return this.data;
 	}
 
 	void rcvfec(RTPpacket rtp) {
@@ -156,15 +162,26 @@ public class FECpacket {
 			System.out.println("Lost exactly one packages");
 
 			// get missing packages in RTPpackages
-			// TODO: calc missing package and restore it
-			while (rtp_list.size() > 0) {
+			int missingnr = get_missing_nr();
+			byte[] missingdata = get_missing_data();
+
+			// restore missing package
+			RTPpacket missingpacket = new RTPpacket(26, missingnr, 0, missingdata, missingdata.length);
+
+			// add the first packages to packetlist
+			for (int i = this.to_frame - this.FEC_group + 1; i < missingnr; i++) {
 				packetlist.add(rtp_list.get(0));
 				rtp_list.remove(0);
 			}
 
-			// restore missing package
+			// add missing package to packetlist
+			packetlist.add(missingpacket);
 
-			// add all packages to packetlist
+			// add remaining packages to packetlist
+			while (rtp_list.size() > 0) {
+				packetlist.add(rtp_list.get(0));
+				rtp_list.remove(0);
+			}
 
 		}
 
