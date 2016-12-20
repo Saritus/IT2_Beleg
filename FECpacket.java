@@ -77,7 +77,7 @@ public class FECpacket {
 	RTPpacket createRTPpacket(int imagenb) {
 		byte[] fecdata = new byte[data_size + 1];
 
-		fecdata[0] = (byte) FEC_group;
+		fecdata[0] = (byte) packages;
 		System.arraycopy(data, 0, fecdata, 1, data_size);
 		// sourcearray, sourceindex, targetarray, targetindex, length
 
@@ -90,6 +90,7 @@ public class FECpacket {
 	void rcvdata(RTPpacket rtppacket) {
 		rtp_nrs.add(rtppacket.getsequencenumber());
 		rtp_list.add(rtppacket);
+		packages++;
 	}
 
 	int get_missing() {
@@ -105,7 +106,7 @@ public class FECpacket {
 	}
 
 	void rcvfec(RTPpacket rtp) {
-		System.out.println(rtp.getsequencenumber());
+		// System.out.println(rtp.getsequencenumber());
 
 		// get FEC_group from first data element
 		FEC_group = rtp.payload[0];
@@ -137,7 +138,7 @@ public class FECpacket {
 		if (rtp_list.size() == this.FEC_group) {
 			// Got all packages
 			System.out.println("Got all packages");
-			for (int i = 0; i < rtp_list.size(); i++) { // fec_packet
+			while (rtp_list.size() > 0) {
 				packetlist.add(rtp_list.get(0));
 				rtp_list.remove(0);
 			}
@@ -145,7 +146,7 @@ public class FECpacket {
 		} else if (rtp_list.size() < this.FEC_group - 1) {
 			// Lost more than one package (not reversable)
 			System.out.println("Lost too many packages");
-			for (int i = 0; i < rtp_list.size(); i++) {
+			while (rtp_list.size() > 0) {
 				packetlist.add(rtp_list.get(0));
 				rtp_list.remove(0);
 			}
@@ -153,10 +154,10 @@ public class FECpacket {
 		} else {
 			// Lost exaclty one package (reversable)
 			System.out.println("Lost exactly one packages");
-			
+
 			// get missing packages in RTPpackages
 			// TODO: calc missing package and restore it
-			for (int i = 0; i < rtp_list.size(); i++) {
+			while (rtp_list.size() > 0) {
 				packetlist.add(rtp_list.get(0));
 				rtp_list.remove(0);
 			}
