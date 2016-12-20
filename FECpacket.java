@@ -41,6 +41,7 @@ public class FECpacket {
 
 	void xordata(byte[] data, int data_length) { // nimmt Nutzerdaten entgegen
 		if (data_length > this.data_size) {
+			
 			// Create new data-array
 			byte[] newdata = new byte[data_length];
 
@@ -51,6 +52,7 @@ public class FECpacket {
 
 			// Set newdata as this.data
 			this.data = newdata;
+			this.data_size = data_length;
 		}
 
 		// XOR param-data-array with new data-array

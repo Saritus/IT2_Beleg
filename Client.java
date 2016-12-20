@@ -387,9 +387,15 @@ public class Client {
 	class displaytimerListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 
+			// TODO: fix wartezeiten
+
 			try {
 				// get the next frame package
 				RTPpacket rtp_packet = displayPackages.get(0);
+
+				if (imagenumber > rtp_packet.getsequencenumber()) {
+					imagenumber = rtp_packet.getsequencenumber();
+				}
 
 				if (imagenumber == rtp_packet.getsequencenumber()) {
 
@@ -409,11 +415,12 @@ public class Client {
 					// remove the displayed package
 					displayPackages.remove(0);
 				}
-				imagenumber++;
 
 			} catch (IndexOutOfBoundsException ioobe) {
 				// No new frame to show
 			}
+
+			imagenumber++; // next frame
 		}
 
 	}
@@ -459,7 +466,7 @@ public class Client {
 	}
 
 	public void print_statistic(int packages_received, int packages_lost, int gettimestamp) {
-		// Übertragenen Paketen: packages_received
+		// ï¿½bertragenen Paketen: packages_received
 		// Paketverlusten: packages_lost
 		// Paketverlustrate: packages_received / (packages_received
 		// + packages_lost)
@@ -469,7 +476,7 @@ public class Client {
 		double package_rate = 1000. * (double) (packages_received) / gettimestamp;
 
 		String output = "";
-		output += String.format("Übertragenen Pakete: %d<br>", packages_received);
+		output += String.format("ï¿½bertragenen Pakete: %d<br>", packages_received);
 		output += String.format("Verlorene Pakete: %d<br>", packages_lost);
 		output += String.format("Paketverlustrate: %.2f%%<br>", package_loss_rate);
 		output += String.format("Datenrate: %.2f Pakete/s<br>", package_rate);
@@ -499,7 +506,7 @@ public class Client {
 			}
 			// otherwise, write the Session line from the RTSPid field
 			else {
-				RTSPBufferedWriter.write("Session: " + RTSPid + "\n");
+				RTSPBufferedWriter.write("Session: " + RTSPid + CRLF);
 			}
 
 			RTSPBufferedWriter.flush();
