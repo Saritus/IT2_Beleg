@@ -41,7 +41,7 @@ public class FECpacket {
 
 	void xordata(byte[] data, int data_length) { // nimmt Nutzerdaten entgegen
 		if (data_length > this.data_size) {
-			
+
 			// Create new data-array
 			byte[] newdata = new byte[data_length];
 
@@ -106,12 +106,16 @@ public class FECpacket {
 
 	void rcvfec(RTPpacket rtp) {
 		System.out.println(rtp.getsequencenumber());
-		// TODO: rtp.payload.length is 0
-		// FEC_group = rtp.payload[0];
+
+		// get FEC_group from first data element
+		FEC_group = rtp.payload[0];
 
 		data_size = rtp.getpayload_length();
-		// data = java.util.Arrays.copyOfRange(rtp.payload, 1,
-		// rtp.payload_size);
+
+		// data is payload without first element
+		// TODO: check payload length (it may loses one byte, which is bad)
+		data = java.util.Arrays.copyOfRange(rtp.payload, 1, rtp.payload_size);
+
 		to_frame = rtp.getsequencenumber();
 	}
 
@@ -121,23 +125,48 @@ public class FECpacket {
 	}
 
 	List<RTPpacket> get_rtp_packets() {
-		/*
-		 * // Check for missing FEC-packets while ((RTPpackages.size() > 0) &&
-		 * (RTPpackages.get(0).getsequencenumber() <= fec_packet.to_frame -
-		 * fec_packet.FEC_group)) { displayPackages.add(RTPpackages.get(0));
-		 * RTPpackages.remove(0); }
-		 * 
-		 * // get missing packages in RTPpackages for (int i = 0; i <
-		 * RTPpackages.size(); i++) { // fec_packet }
-		 * 
-		 * // if missing==1, calculate missing package
-		 * 
-		 * // add rtppackages from RTPpackages to displayPackages
-		 * 
-		 * // reset RTPpackages
-		 * 
-		 */
 
-		return rtp_list;
+		List<RTPpacket> packetlist = new ArrayList<RTPpacket>();
+
+		// Check for missing FEC-packets
+		while ((rtp_list.size() > 0) && (rtp_list.get(0).getsequencenumber() <= this.to_frame - this.FEC_group)) {
+			packetlist.add(rtp_list.get(0));
+			rtp_list.remove(0);
+		}
+
+		if (rtp_list.size() == this.FEC_group) {
+			// Got all packages
+			System.out.println("Got all packages");
+			for (int i = 0; i < rtp_list.size(); i++) { // fec_packet
+				packetlist.add(rtp_list.get(0));
+				rtp_list.remove(0);
+			}
+
+		} else if (rtp_list.size() < this.FEC_group - 1) {
+			// Lost more than one package (not reversable)
+			System.out.println("Lost too many packages");
+			for (int i = 0; i < rtp_list.size(); i++) {
+				packetlist.add(rtp_list.get(0));
+				rtp_list.remove(0);
+			}
+
+		} else {
+			// Lost exaclty one package (reversable)
+			System.out.println("Lost exactly one packages");
+			
+			// get missing packages in RTPpackages
+			// TODO: calc missing package and restore it
+			for (int i = 0; i < rtp_list.size(); i++) {
+				packetlist.add(rtp_list.get(0));
+				rtp_list.remove(0);
+			}
+
+			// restore missing package
+
+			// add all packages to packetlist
+
+		}
+
+		return packetlist;
 	}
 }

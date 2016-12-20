@@ -64,7 +64,7 @@ public class Server extends JFrame implements ActionListener {
 
 	// FEC
 	FECpacket fecpacket;
-	int k = 20;
+	int k = 2;
 
 	final static String CRLF = "\r\n";
 
@@ -250,7 +250,7 @@ public class Server extends JFrame implements ActionListener {
 
 				// System.out.println("Send frame #"+imagenb);
 				// print the header bitstream
-				rtp_packet.printheader();
+				// rtp_packet.printheader();
 
 				// update GUI
 				label.setText("Send frame #" + imagenb);

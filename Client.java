@@ -339,7 +339,7 @@ public class Client {
 							+ rtp_packet.gettimestamp() + " ms, of type " + rtp_packet.getpayloadtype());
 
 					// print header bitstream:
-					rtp_packet.printheader();
+					// rtp_packet.printheader();
 
 					// update statistics
 					packages_received++;
@@ -361,7 +361,7 @@ public class Client {
 							+ rtp_packet.gettimestamp() + " ms, of type " + rtp_packet.getpayloadtype());
 
 					// print header bitstream:
-					rtp_packet.printheader();
+					// rtp_packet.printheader();
 
 					// add fec packet information
 					fec_packet.rcvfec(rtp_packet);
@@ -386,8 +386,6 @@ public class Client {
 
 	class displaytimerListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-
-			// TODO: fix wartezeiten
 
 			try {
 				// get the next frame package
