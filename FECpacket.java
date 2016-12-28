@@ -28,7 +28,7 @@ public class FECpacket {
 	// Sender
 
 	void setGroupSize() {
-		// TODO:
+		// TODO: push k at the beginning of data (already done?)
 		// data = data >> 8 | k << data_size;
 	}
 
@@ -175,7 +175,7 @@ public class FECpacket {
 			}
 
 			// add missing package to packetlist
-			packetlist.add(missingpacket);
+			//packetlist.add(missingpacket); // TODO: missingpacket seems to be not correct
 
 			// add remaining packages to packetlist
 			while (rtp_list.size() > 0) {
