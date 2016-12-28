@@ -168,6 +168,11 @@ public class FECpacket {
 			// restore missing package
 			RTPpacket missingpacket = new RTPpacket(26, missingnr, 0, missingdata, missingdata.length);
 
+			// Print rtp_packet information to console
+			System.out.println("SqNr: " + missingpacket.SequenceNumber);
+			System.out.println("PSize: " + missingpacket.payload_size);
+			System.out.println("P.Size: " + missingpacket.payload.length);
+
 			// add the first packages to packetlist
 			for (int i = this.to_frame - this.FEC_group + 1; i < missingnr; i++) {
 				packetlist.add(rtp_list.get(0));
