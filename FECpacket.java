@@ -40,13 +40,13 @@ public class FECpacket {
 	}
 
 	void xordata(byte[] data, int data_length) { // nimmt Nutzerdaten entgegen
-		if (data_length > this.data_size) {
+		if (data_length > this.data.length) {
 
 			// Create new data-array
 			byte[] newdata = new byte[data_length];
 
 			// Fill the new data-array with the old data
-			for (int i = 0; i < this.data_size; i++) {
+			for (int i = 0; i < this.data.length; i++) {
 				newdata[i] = this.data[i];
 			}
 
@@ -81,7 +81,7 @@ public class FECpacket {
 		System.arraycopy(data, 0, fecdata, 1, data_size);
 		// sourcearray, sourceindex, targetarray, targetindex, length
 
-		return new RTPpacket(FEC_TYPE, imagenb, imagenb * FRAME_PERIOD, fecdata, data_size);
+		return new RTPpacket(FEC_TYPE, imagenb, imagenb * FRAME_PERIOD, fecdata, data_size + 1);
 	}
 
 	// Empfänger
@@ -103,8 +103,10 @@ public class FECpacket {
 				return next + 1;
 			}
 		}
-		System.err.println("Kein fehlendes Packet gefunden");
-		return -1;
+		// letztes Paket fehlt
+
+		// System.err.println("Kein fehlendes Packet gefunden");
+		return this.to_frame;
 	}
 
 	byte[] get_missing_data() {
@@ -117,11 +119,12 @@ public class FECpacket {
 		// get FEC_group from first data element
 		FEC_group = rtp.payload[0];
 
-		data_size = rtp.getpayload_length();
+		data_size = rtp.getpayload_length() - 1;
 
 		// data is payload without first element
 		// TODO: check payload length (it may loses one byte, which is bad)
-		data = java.util.Arrays.copyOfRange(rtp.payload, 1, rtp.payload_size);
+		byte[] newdata = java.util.Arrays.copyOfRange(rtp.payload, 1, rtp.getpayload_length());
+		xordata(newdata, data_size);
 
 		to_frame = rtp.getsequencenumber();
 	}
@@ -181,7 +184,7 @@ public class FECpacket {
 
 			// add missing package to packetlist
 			// TODO: missingpacket seems to be not correct
-			// packetlist.add(missingpacket);
+			packetlist.add(missingpacket);
 
 			// add remaining packages to packetlist
 			while (rtp_list.size() > 0) {
