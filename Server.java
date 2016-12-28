@@ -99,7 +99,7 @@ public class Server extends JFrame implements ActionListener {
 		// GUI:
 		label = new JLabel("Send frame #        ", JLabel.CENTER);
 		getContentPane().add(label, BorderLayout.CENTER);
-		discard_slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
+		discard_slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 10);
 		discard_slider.setMajorTickSpacing(10);
 		discard_slider.setMinorTickSpacing(5);
 		discard_slider.setPaintTicks(true);
