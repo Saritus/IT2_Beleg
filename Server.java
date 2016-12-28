@@ -115,6 +115,7 @@ public class Server extends JFrame implements ActionListener {
 
 		// show GUI:
 		theServer.pack();
+		theServer.setSize(300, 100); // TODO: check for better method
 		theServer.setVisible(true);
 
 		// get RTSP socket port from the command line
@@ -213,8 +214,13 @@ public class Server extends JFrame implements ActionListener {
 
 				// Builds an RTPpacket object containing the frame
 				RTPpacket rtp_packet = new RTPpacket(MJPEG_TYPE, imagenb, imagenb * FRAME_PERIOD, buf, image_length);
-				System.out.println(rtp_packet.payload.length);
-
+				
+				// Print rtp_packet information to console
+				System.out.println("- - - - - - - - - -");
+				System.out.println("SqNr: " + rtp_packet.SequenceNumber);
+				System.out.println("PSize: " + rtp_packet.payload_size);
+				System.out.println("P.Size: " + rtp_packet.payload.length);
+				
 				// get to total length of the full rtp packet to send
 				int packet_length = rtp_packet.getlength();
 
