@@ -62,13 +62,10 @@ public class RTPpacket {
 		// fill the payload bitstream:
 		// --------------------------
 		payload_size = data_length;
-		payload = new byte[data_length];
 
-		// fill payload array of byte from data (given in parameter of the
-		// constructor)
-		for (int i = 0; i < data_length; i++) {
-			payload[i] = data[i];
-		}
+		// fill payload array of byte from data
+		// given in parameter of the constructor
+		payload = data.clone();
 
 		// ! Do not forget to uncomment method printheader() below !
 
