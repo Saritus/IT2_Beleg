@@ -387,7 +387,7 @@ public class Client {
 	class displaytimerListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 
-			System.out.println(displayPackages.size());
+			//System.out.println(displayPackages.size());
 
 			try {
 				// get the next frame package
