@@ -214,13 +214,7 @@ public class Server extends JFrame implements ActionListener {
 
 				// Builds an RTPpacket object containing the frame
 				RTPpacket rtp_packet = new RTPpacket(MJPEG_TYPE, imagenb, imagenb * FRAME_PERIOD, buf, image_length);
-				
-				// Print rtp_packet information to console
-				System.out.println("- - - - - - - - - -");
-				System.out.println("SqNr: " + rtp_packet.SequenceNumber);
-				System.out.println("PSize: " + rtp_packet.payload_size);
-				System.out.println("P.Size: " + rtp_packet.payload.length);
-				
+
 				// get to total length of the full rtp packet to send
 				int packet_length = rtp_packet.getlength();
 

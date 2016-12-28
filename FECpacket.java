@@ -146,7 +146,7 @@ public class FECpacket {
 
 		if (rtp_list.size() == this.FEC_group) {
 			// Got all packages
-			System.out.println("Got all packages");
+
 			while (rtp_list.size() > 0) {
 				packetlist.add(rtp_list.get(0));
 				rtp_list.remove(0);
@@ -154,7 +154,7 @@ public class FECpacket {
 
 		} else if (rtp_list.size() < this.FEC_group - 1) {
 			// Lost more than one package (not reversable)
-			System.out.println("Lost too many packages");
+
 			while (rtp_list.size() > 0) {
 				packetlist.add(rtp_list.get(0));
 				rtp_list.remove(0);
@@ -162,7 +162,6 @@ public class FECpacket {
 
 		} else {
 			// Lost exaclty one package (reversable)
-			System.out.println("Lost exactly one packages");
 
 			// get missing packages in RTPpackages
 			int missingnr = get_missing_nr();
@@ -170,11 +169,6 @@ public class FECpacket {
 
 			// restore missing package
 			RTPpacket missingpacket = new RTPpacket(26, missingnr, 0, missingdata, missingdata.length);
-
-			// Print rtp_packet information to console
-			System.out.println("SqNr: " + missingpacket.SequenceNumber);
-			System.out.println("PSize: " + missingpacket.payload_size);
-			System.out.println("P.Size: " + missingpacket.payload.length);
 
 			// add the first packages to packetlist
 			for (int i = this.to_frame - this.FEC_group + 1; i < missingnr; i++) {
