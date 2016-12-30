@@ -174,6 +174,8 @@ public class FECpacket {
 			 * 0) { packetlist.add(rtp_list.get(0)); rtp_list.remove(0); }
 			 */
 
+			return true;
+
 		}
 
 	}
@@ -194,6 +196,7 @@ public class FECpacket {
 			return payload; // Return next image as bytearray
 		} else {
 			return null; // No image to show
+			// TODO: this creates a bug, i think
 		}
 	}
 }
