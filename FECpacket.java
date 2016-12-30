@@ -168,7 +168,8 @@ public class FECpacket {
 
 			// while last element in displaylist is bigger than number of
 			// missingpacket
-			while (displayPackages.get(displayPackages.size() - 1).SequenceNumber > missingnr) {
+			while ((displayPackages.size() > 0)
+					&& (displayPackages.get(displayPackages.size() - 1).SequenceNumber > missingnr)) {
 				// add last element to tmp
 				tmp.add(0, displayPackages.get(displayPackages.size() - 1));
 				// remove last element from displaypackages
