@@ -7,7 +7,6 @@ public class FECpacket {
 	int packages;
 	int to_frame;
 	List<Integer> rtp_nrs;
-	List<RTPpacket> rtp_list;
 	List<RTPpacket> displayPackages = new ArrayList<RTPpacket>();
 
 	static int FEC_TYPE = 127;
@@ -28,7 +27,6 @@ public class FECpacket {
 		data_size = 0;
 		data = new byte[0];
 		to_frame = 0;
-		rtp_list = new ArrayList<>();
 		rtp_nrs = new ArrayList<>();
 	}
 
@@ -89,10 +87,9 @@ public class FECpacket {
 	// getrennte Puffer für Mediendaten und FEC
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
 	void rcvdata(RTPpacket rtppacket) {
-		// TODO: push new rtp package directly to displaylist
-		// TODO: together with rcvfec changes
+		// TODO: remove the permanent fec-rtp puffer memory
 		rtp_nrs.add(rtppacket.getsequencenumber());
-		rtp_list.add(rtppacket);
+		displayPackages.add(rtppacket);
 		packages++;
 		xordata(rtppacket);
 	}
@@ -133,10 +130,52 @@ public class FECpacket {
 		// add all stored packages to displayList
 		// TODO: dont push packages to displaylist
 		// TODO: only check if last elements of current displaylist are complete
-		displayPackages.addAll(this.get_rtp_packets());
+		// displayPackages.addAll(this.get_rtp_packets());
+		checkDisplaylist();
 
 		// reset data
 		reset();
+	}
+
+	private boolean checkDisplaylist() {
+		// TODO check last entries of displaylist
+
+		if (rtp_nrs.size() == this.FEC_group) {
+			// Got all packages
+			return true;
+
+		} else if (rtp_nrs.size() < this.FEC_group - 1) {
+			// Lost more than one package (not reversable)
+			return false;
+
+		} else {
+			// Lost exaclty one package (reversable)
+
+			// TODO: find the missing package (DONE)
+			// TODO: restore the missing package (DONE)
+			// TODO: put the missing package in the right place
+
+			// get missing packages in RTPpackages
+			int missingnr = get_missing_nr();
+			byte[] missingdata = get_missing_data();
+
+			// restore missing package
+			RTPpacket missingpacket = new RTPpacket(26, missingnr, 0, missingdata, missingdata.length);
+
+			/*
+			 * // add the first packages to packetlist for (int i =
+			 * this.to_frame - this.FEC_group + 1; i < missingnr; i++) {
+			 * packetlist.add(rtp_list.get(0)); rtp_list.remove(0); }
+			 * 
+			 * // add missing package to packetlist
+			 * packetlist.add(missingpacket);
+			 * 
+			 * // add remaining packages to packetlist while (rtp_list.size() >
+			 * 0) { packetlist.add(rtp_list.get(0)); rtp_list.remove(0); }
+			 */
+
+		}
+
 	}
 
 	byte[] getjpeg(int nr) {
@@ -156,61 +195,5 @@ public class FECpacket {
 		} else {
 			return null; // No image to show
 		}
-	}
-
-	List<RTPpacket> get_rtp_packets() {
-
-		List<RTPpacket> packetlist = new ArrayList<RTPpacket>();
-
-		// Check for missing FEC-packets
-		while ((rtp_list.size() > 0) && (rtp_list.get(0).getsequencenumber() <= this.to_frame - this.FEC_group)) {
-			packetlist.add(rtp_list.get(0));
-			rtp_list.remove(0);
-		}
-
-		if (rtp_list.size() == this.FEC_group) {
-			// Got all packages
-
-			while (rtp_list.size() > 0) {
-				packetlist.add(rtp_list.get(0));
-				rtp_list.remove(0);
-			}
-
-		} else if (rtp_list.size() < this.FEC_group - 1) {
-			// Lost more than one package (not reversable)
-
-			while (rtp_list.size() > 0) {
-				packetlist.add(rtp_list.get(0));
-				rtp_list.remove(0);
-			}
-
-		} else {
-			// Lost exaclty one package (reversable)
-
-			// get missing packages in RTPpackages
-			int missingnr = get_missing_nr();
-			byte[] missingdata = get_missing_data();
-
-			// restore missing package
-			RTPpacket missingpacket = new RTPpacket(26, missingnr, 0, missingdata, missingdata.length);
-
-			// add the first packages to packetlist
-			for (int i = this.to_frame - this.FEC_group + 1; i < missingnr; i++) {
-				packetlist.add(rtp_list.get(0));
-				rtp_list.remove(0);
-			}
-
-			// add missing package to packetlist
-			packetlist.add(missingpacket);
-
-			// add remaining packages to packetlist
-			while (rtp_list.size() > 0) {
-				packetlist.add(rtp_list.get(0));
-				rtp_list.remove(0);
-			}
-
-		}
-
-		return packetlist;
 	}
 }
