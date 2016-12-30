@@ -62,7 +62,6 @@ public class Client {
 	int lasttimestamp = 0;
 	// fec
 	FECpacket fec_packet = new FECpacket();
-	List<RTPpacket> displayPackages = new ArrayList<RTPpacket>();
 	Timer displaytimer; // timer used to display the next frame
 	int imagenumber = 1;
 
@@ -365,12 +364,6 @@ public class Client {
 
 					// add fec packet information
 					fec_packet.rcvfec(rtp_packet);
-
-					// add all stored packages to displayList
-					displayPackages.addAll(fec_packet.get_rtp_packets());
-
-					// reset fec_packet
-					fec_packet = new FECpacket();
 				}
 			} catch (InterruptedIOException iioe) {
 				// System.out.println("Nothing to read");
@@ -387,36 +380,20 @@ public class Client {
 	class displaytimerListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			try {
-				// get the next frame package
-				RTPpacket rtp_packet = displayPackages.get(0);
+				// get image as bytearray from fec packet
+				byte[] payload = fec_packet.getjpeg(imagenumber);
 
-				if (imagenumber > rtp_packet.getsequencenumber()) {
-					imagenumber = rtp_packet.getsequencenumber();
-				}
+				// get an Image object from the payload bitstream
+				Toolkit toolkit = Toolkit.getDefaultToolkit();
+				Image image = toolkit.createImage(payload, 0, payload.length);
 
-				if (imagenumber == rtp_packet.getsequencenumber()) {
-
-					// get the payload bitstream from the RTPpacket object
-					int payload_length = rtp_packet.getpayload_length();
-					byte[] payload = new byte[payload_length];
-					rtp_packet.getpayload(payload);
-
-					// get an Image object from the payload bitstream
-					Toolkit toolkit = Toolkit.getDefaultToolkit();
-					Image image = toolkit.createImage(payload, 0, payload_length);
-
-					// display the image as an ImageIcon object
-					icon = new ImageIcon(image);
-					iconLabel.setIcon(icon);
-
-					// remove the displayed package
-					displayPackages.remove(0);
-				}
+				// display the image as an ImageIcon object
+				icon = new ImageIcon(image);
+				iconLabel.setIcon(icon);
 
 			} catch (IndexOutOfBoundsException ioobe) {
 				// No new frame to show
 			}
-
 			imagenumber++; // next frame
 		}
 

@@ -8,6 +8,7 @@ public class FECpacket {
 	int to_frame;
 	List<Integer> rtp_nrs = new ArrayList<Integer>();
 	List<RTPpacket> rtp_list = new ArrayList<RTPpacket>();
+	List<RTPpacket> displayPackages = new ArrayList<RTPpacket>();
 
 	static int FEC_TYPE = 127;
 	static int FRAME_PERIOD = 40;
@@ -26,11 +27,6 @@ public class FECpacket {
 	}
 
 	// Sender
-
-	void setGroupSize() {
-		// TODO: push k at the beginning of data (already done?)
-		// data = data >> 8 | k << data_size;
-	}
 
 	void setdata(byte[] data, int data_length) {
 		this.data_size = data_length;
@@ -127,11 +123,28 @@ public class FECpacket {
 		xordata(newdata, data_size);
 
 		to_frame = rtp.getsequencenumber();
+
+		// add all stored packages to displayList
+		displayPackages.addAll(this.get_rtp_packets());
 	}
 
 	byte[] getjpeg(int nr) {
-		return null; // Übergibt korrigiertes Paket oder Fehler (null)
+		// TODO: return new image for displaytimer
+		if (displayPackages.size() > 0) {
+			RTPpacket rtp_packet = displayPackages.get(0);
 
+			// get the payload bitstream from the RTPpacket object
+			int payload_length = rtp_packet.getpayload_length();
+			byte[] payload = new byte[payload_length];
+			rtp_packet.getpayload(payload);
+
+			// remove the displayed package
+			displayPackages.remove(0);
+
+			return payload; // Return next image as bytearray
+		} else {
+			return null; // No image to show
+		}
 	}
 
 	List<RTPpacket> get_rtp_packets() {
