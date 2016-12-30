@@ -331,7 +331,7 @@ public class Client {
 				RTPpacket rtp_packet = new RTPpacket(rcvdp.getData(), rcvdp.getLength());
 				// System.out.println(rtp_packet.PayloadType);
 
-				if (rtp_packet.PayloadType == 26) { // rtp
+				if (rtp_packet.getpayloadtype() == 26) { // rtp
 
 					// print important header fields of the RTP packet received:
 					System.out.println("Got RTP packet with SeqNum # " + rtp_packet.getsequencenumber() + " TimeStamp "
@@ -354,7 +354,7 @@ public class Client {
 					// add receveid package to ArrayList
 					fec_packet.rcvdata(rtp_packet);
 
-				} else if (rtp_packet.PayloadType == 127) { // fec
+				} else if (rtp_packet.getpayloadtype() == 127) { // fec
 					// print important header fields of the RTP packet received:
 					System.out.println("Got FEC packet with SeqNum # " + rtp_packet.getsequencenumber() + " TimeStamp "
 							+ rtp_packet.gettimestamp() + " ms, of type " + rtp_packet.getpayloadtype());

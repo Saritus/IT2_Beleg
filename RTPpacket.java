@@ -5,15 +5,15 @@ public class RTPpacket {
 	static int HEADER_SIZE = 12;
 
 	// Fields that compose the RTP header
-	public int Version;
-	public int Padding;
-	public int Extension;
-	public int CC;
-	public int Marker;
-	public int PayloadType;
-	public int SequenceNumber;
-	public int TimeStamp;
-	public int Ssrc;
+	private int Version;
+	private int Padding;
+	private int Extension;
+	private int CC;
+	private int Marker;
+	private int PayloadType;
+	private int SequenceNumber;
+	private int TimeStamp;
+	private int Ssrc;
 
 	// Bitstream of the RTP header
 	public byte[] header;

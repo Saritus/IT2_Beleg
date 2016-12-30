@@ -87,8 +87,8 @@ public class FECpacket {
 	// getrennte Puffer für Mediendaten und FEC
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
 	void rcvdata(RTPpacket rtppacket) {
-		if ((displayPackages.isEmpty())
-				|| (rtppacket.SequenceNumber > displayPackages.get(displayPackages.size() - 1).SequenceNumber)) {
+		if ((displayPackages.isEmpty()) || (rtppacket.getsequencenumber() > displayPackages
+				.get(displayPackages.size() - 1).getsequencenumber())) {
 			rtp_nrs.add(rtppacket.getsequencenumber());
 			displayPackages.add(rtppacket);
 			packages++;
@@ -160,7 +160,7 @@ public class FECpacket {
 
 			// remove bigger packages than missingpackage
 			while ((displayPackages.size() > 0)
-					&& (displayPackages.get(displayPackages.size() - 1).SequenceNumber > missingnr)) {
+					&& (displayPackages.get(displayPackages.size() - 1).getsequencenumber() > missingnr)) {
 				tmp.add(0, displayPackages.get(displayPackages.size() - 1));
 				displayPackages.remove(displayPackages.size() - 1);
 			}
