@@ -170,7 +170,7 @@ public class FECpacket {
 			// missingpacket
 			while (displayPackages.get(displayPackages.size() - 1).SequenceNumber > missingnr) {
 				// add last element to tmp
-				tmp.add(displayPackages.get(displayPackages.size() - 1));
+				tmp.add(0, displayPackages.get(displayPackages.size() - 1));
 				// remove last element from displaypackages
 				displayPackages.remove(displayPackages.size() - 1);
 			}
@@ -182,8 +182,8 @@ public class FECpacket {
 			// TODO: check if correct order
 			// start to end OR end to start
 			while (tmp.size() > 0) {
-				displayPackages.add(tmp.get(tmp.size() - 1));
-				tmp.remove(tmp.size() - 1);
+				displayPackages.add(tmp.get(0));
+				tmp.remove(0);
 			}
 
 			/*
