@@ -6,32 +6,31 @@ public class FECpacket {
 	int data_size;
 	int packages;
 	int to_frame;
-	List<Integer> rtp_nrs = new ArrayList<Integer>();
-	List<RTPpacket> rtp_list = new ArrayList<RTPpacket>();
+	List<Integer> rtp_nrs;
+	List<RTPpacket> displayPackages = new ArrayList<RTPpacket>();
 
 	static int FEC_TYPE = 127;
 	static int FRAME_PERIOD = 40;
 
 	FECpacket(int k) {
-		FEC_group = k;
-		packages = 0;
-
-		data_size = 0;
-		data = new byte[0];
-		to_frame = 0;
+		reset();
+		this.FEC_group = k;
 	}
 
 	FECpacket() {
 		this(0);
 	}
 
-	// Sender
-
-	void setGroupSize() {
-		// TODO: push k at the beginning of data (already done?)
-		// data = data >> 8 | k << data_size;
+	void reset() {
+		FEC_group = 0;
+		packages = 0;
+		data_size = 0;
+		data = new byte[0];
+		to_frame = 0;
+		rtp_nrs = new ArrayList<>();
 	}
 
+	// Sender
 	void setdata(byte[] data, int data_length) {
 		this.data_size = data_length;
 		for (int i = 0; i < data_size; i++) {
@@ -88,8 +87,9 @@ public class FECpacket {
 	// getrennte Puffer für Mediendaten und FEC
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
 	void rcvdata(RTPpacket rtppacket) {
+		// TODO: remove the permanent fec-rtp puffer memory
 		rtp_nrs.add(rtppacket.getsequencenumber());
-		rtp_list.add(rtppacket);
+		displayPackages.add(rtppacket);
 		packages++;
 		xordata(rtppacket);
 	}
@@ -122,46 +122,38 @@ public class FECpacket {
 		data_size = rtp.getpayload_length() - 1;
 
 		// data is payload without first element
-		// TODO: check payload length (it may loses one byte, which is bad)
-		byte[] newdata = java.util.Arrays.copyOfRange(rtp.payload, 1, rtp.getpayload_length());
+		byte[] newdata = Arrays.copyOfRange(rtp.payload, 1, rtp.getpayload_length());
 		xordata(newdata, data_size);
 
 		to_frame = rtp.getsequencenumber();
+
+		// add all stored packages to displayList
+		// TODO: dont push packages to displaylist
+		// TODO: only check if last elements of current displaylist are complete
+		// displayPackages.addAll(this.get_rtp_packets());
+		checkDisplaylist();
+
+		// reset data
+		reset();
 	}
 
-	byte[] getjpeg(int nr) {
-		return null; // Übergibt korrigiertes Paket oder Fehler (null)
+	private boolean checkDisplaylist() {
+		// TODO check last entries of displaylist
 
-	}
-
-	List<RTPpacket> get_rtp_packets() {
-
-		List<RTPpacket> packetlist = new ArrayList<RTPpacket>();
-
-		// Check for missing FEC-packets
-		while ((rtp_list.size() > 0) && (rtp_list.get(0).getsequencenumber() <= this.to_frame - this.FEC_group)) {
-			packetlist.add(rtp_list.get(0));
-			rtp_list.remove(0);
-		}
-
-		if (rtp_list.size() == this.FEC_group) {
+		if (rtp_nrs.size() == this.FEC_group) {
 			// Got all packages
+			return true;
 
-			while (rtp_list.size() > 0) {
-				packetlist.add(rtp_list.get(0));
-				rtp_list.remove(0);
-			}
-
-		} else if (rtp_list.size() < this.FEC_group - 1) {
+		} else if (rtp_nrs.size() < this.FEC_group - 1) {
 			// Lost more than one package (not reversable)
-
-			while (rtp_list.size() > 0) {
-				packetlist.add(rtp_list.get(0));
-				rtp_list.remove(0);
-			}
+			return false;
 
 		} else {
 			// Lost exaclty one package (reversable)
+
+			// TODO: find the missing package (DONE)
+			// TODO: restore the missing package (DONE)
+			// TODO: put the missing package in the right place
 
 			// get missing packages in RTPpackages
 			int missingnr = get_missing_nr();
@@ -170,24 +162,65 @@ public class FECpacket {
 			// restore missing package
 			RTPpacket missingpacket = new RTPpacket(26, missingnr, 0, missingdata, missingdata.length);
 
-			// add the first packages to packetlist
-			for (int i = this.to_frame - this.FEC_group + 1; i < missingnr; i++) {
-				packetlist.add(rtp_list.get(0));
-				rtp_list.remove(0);
+			// * put the missingpacket at the right place
+			// create empty temp list
+			List<RTPpacket> tmp = new ArrayList<>();
+
+			// while last element in displaylist is bigger than number of
+			// missingpacket
+			while ((displayPackages.size() > 0)
+					&& (displayPackages.get(displayPackages.size() - 1).SequenceNumber > missingnr)) {
+				// add last element to tmp
+				tmp.add(0, displayPackages.get(displayPackages.size() - 1));
+				// remove last element from displaypackages
+				displayPackages.remove(displayPackages.size() - 1);
 			}
 
-			// add missing package to packetlist
-			// TODO: missingpacket seems to be not correct
-			packetlist.add(missingpacket);
+			// add missingpacket at right position
+			displayPackages.add(missingpacket);
 
-			// add remaining packages to packetlist
-			while (rtp_list.size() > 0) {
-				packetlist.add(rtp_list.get(0));
-				rtp_list.remove(0);
+			// add elements in tmp to displaypackages
+			// TODO: check if correct order
+			// start to end OR end to start
+			while (tmp.size() > 0) {
+				displayPackages.add(tmp.get(0));
+				tmp.remove(0);
 			}
 
+			/*
+			 * // add the first packages to packetlist for (int i =
+			 * this.to_frame - this.FEC_group + 1; i < missingnr; i++) {
+			 * packetlist.add(rtp_list.get(0)); rtp_list.remove(0); }
+			 * 
+			 * // add missing package to packetlist
+			 * packetlist.add(missingpacket);
+			 * 
+			 * // add remaining packages to packetlist while (rtp_list.size() >
+			 * 0) { packetlist.add(rtp_list.get(0)); rtp_list.remove(0); }
+			 */
+
+			return true;
 		}
 
-		return packetlist;
+	}
+
+	byte[] getjpeg(int nr) {
+		// TODO: return new image for displaytimer
+		if (displayPackages.size() > 0) {
+			RTPpacket rtp_packet = displayPackages.get(0);
+
+			// get the payload bitstream from the RTPpacket object
+			int payload_length = rtp_packet.getpayload_length();
+			byte[] payload = new byte[payload_length];
+			rtp_packet.getpayload(payload);
+
+			// remove the displayed package
+			displayPackages.remove(0);
+
+			return payload; // Return next image as bytearray
+		} else {
+			return null; // No image to show
+			// TODO: this creates a bug, i think
+		}
 	}
 }
