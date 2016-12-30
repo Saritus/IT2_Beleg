@@ -124,7 +124,7 @@ public class Client {
 		// init displaytimer
 		// --------------------------
 		displaytimer = new Timer(40, new displaytimerListener());
-		displaytimer.setInitialDelay(0);
+		displaytimer.setInitialDelay(10000);
 		displaytimer.setCoalesce(true);
 
 		// allocate enough memory for the buffer used to receive data from the
