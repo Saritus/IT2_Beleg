@@ -162,6 +162,30 @@ public class FECpacket {
 			// restore missing package
 			RTPpacket missingpacket = new RTPpacket(26, missingnr, 0, missingdata, missingdata.length);
 
+			// * put the missingpacket at the right place
+			// create empty temp list
+			List<RTPpacket> tmp = new ArrayList<>();
+
+			// while last element in displaylist is bigger than number of
+			// missingpacket
+			while (displayPackages.get(displayPackages.size() - 1).SequenceNumber > missingnr) {
+				// add last element to tmp
+				tmp.add(displayPackages.get(displayPackages.size() - 1));
+				// remove last element from displaypackages
+				displayPackages.remove(displayPackages.size() - 1);
+			}
+
+			// add missingpacket at right position
+			displayPackages.add(missingpacket);
+
+			// add elements in tmp to displaypackages
+			// TODO: check if correct order
+			// start to end OR end to start
+			while (tmp.size() > 0) {
+				displayPackages.add(tmp.get(tmp.size() - 1));
+				tmp.remove(tmp.size() - 1);
+			}
+
 			/*
 			 * // add the first packages to packetlist for (int i =
 			 * this.to_frame - this.FEC_group + 1; i < missingnr; i++) {
@@ -175,7 +199,6 @@ public class FECpacket {
 			 */
 
 			return true;
-
 		}
 
 	}
