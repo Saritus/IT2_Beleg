@@ -391,12 +391,12 @@ public class Client {
 				icon = new ImageIcon(image);
 				iconLabel.setIcon(icon);
 
+				// next frame
+				imagenumber++;
 			} catch (IndexOutOfBoundsException ioobe) {
 				// No new frame to show
 			}
-			imagenumber++; // next frame
 		}
-
 	}
 
 	// ------------------------------------
