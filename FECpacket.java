@@ -118,7 +118,6 @@ public class FECpacket {
 		data_size = rtp.getpayload_length() - 1;
 
 		// data is payload without first element
-		// TODO: check payload length (it may loses one byte, which is bad)
 		byte[] newdata = java.util.Arrays.copyOfRange(rtp.payload, 1, rtp.getpayload_length());
 		xordata(newdata, data_size);
 
@@ -190,7 +189,6 @@ public class FECpacket {
 			}
 
 			// add missing package to packetlist
-			// TODO: missingpacket seems to be not correct
 			packetlist.add(missingpacket);
 
 			// add remaining packages to packetlist
