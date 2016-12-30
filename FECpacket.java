@@ -89,6 +89,8 @@ public class FECpacket {
 	// getrennte Puffer für Mediendaten und FEC
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
 	void rcvdata(RTPpacket rtppacket) {
+		// TODO: push new rtp package directly to displaylist
+		// TODO: together with rcvfec changes
 		rtp_nrs.add(rtppacket.getsequencenumber());
 		rtp_list.add(rtppacket);
 		packages++;
@@ -129,6 +131,8 @@ public class FECpacket {
 		to_frame = rtp.getsequencenumber();
 
 		// add all stored packages to displayList
+		// TODO: dont push packages to displaylist
+		// TODO: only check if last elements of current displaylist are complete
 		displayPackages.addAll(this.get_rtp_packets());
 
 		// reset data
