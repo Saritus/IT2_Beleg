@@ -345,7 +345,7 @@ public class Client {
 
 					// print statistics
 					if (rtp_packet.gettimestamp() >= lasttimestamp + 10) { //
-						print_statistic(packages_received, packages_lost, rtp_packet.gettimestamp());
+						print_statistic(rtp_packet.gettimestamp());
 						lasttimestamp = rtp_packet.gettimestamp();
 					}
 
@@ -439,9 +439,9 @@ public class Client {
 		return (reply_code);
 	}
 
-	public void print_statistic(int packages_received, int packages_lost, int gettimestamp) {
+	public void print_statistic(int timestamp) {
 		double package_lost_rate = 100. * (double) (packages_lost) / (packages_received + packages_lost);
-		double package_rate = 1000. * (double) (packages_received) / gettimestamp;
+		double package_rate = 1000. * (double) (packages_received) / timestamp;
 
 		String output = "";
 		output += String.format("Übertragenen Pakete: %d<br>", packages_received);
