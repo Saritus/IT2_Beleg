@@ -481,5 +481,4 @@ public class Client {
 			System.exit(0);
 		}
 	}
-
-}// end of Class Client
+} // end of Class Client
