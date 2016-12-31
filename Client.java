@@ -307,7 +307,6 @@ public class Client {
 			send_RTSP_request("OPTIONS");
 
 			if (parse_server_response() != 200)
-				// TODO: Check if server response parse is important
 				System.out.println("Invalid Server Response");
 		}
 	}
@@ -427,7 +426,6 @@ public class Client {
 
 				// if state == INIT gets the Session Id from the SessionLine
 				if (state == INIT) {
-					// TODO: Check if state==INIT is important and why
 					tokens = new StringTokenizer(SessionLine);
 					tokens.nextToken(); // skip over the Session:
 					RTSPid = Integer.parseInt(tokens.nextToken());
