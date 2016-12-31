@@ -93,6 +93,9 @@ public class FECpacket {
 			displayPackages.add(rtppacket);
 			packages++;
 			xordata(rtppacket);
+		} else {
+			// old image, do nothing
+			System.out.println("Old image");
 		}
 	}
 
