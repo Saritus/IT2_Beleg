@@ -9,6 +9,8 @@ public class FECpacket {
 	List<Integer> rtp_nrs;
 	List<RTPpacket> displayPackages = new ArrayList<RTPpacket>();
 
+	private int lastSqNr = 0;
+
 	static int FEC_TYPE = 127;
 	static int FRAME_PERIOD = 40;
 
@@ -87,15 +89,12 @@ public class FECpacket {
 	// getrennte Puffer für Mediendaten und FEC
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
 	void rcvdata(RTPpacket rtppacket) {
-		if ((displayPackages.isEmpty()) || (rtppacket.getsequencenumber() > displayPackages
-				.get(displayPackages.size() - 1).getsequencenumber())) {
+		if (rtppacket.getsequencenumber() > lastSqNr) {
 			rtp_nrs.add(rtppacket.getsequencenumber());
 			displayPackages.add(rtppacket);
 			packages++;
 			xordata(rtppacket);
-		} else {
-			// old image, do nothing
-			System.out.println("Old image");
+			lastSqNr = rtppacket.getsequencenumber();
 		}
 	}
 
