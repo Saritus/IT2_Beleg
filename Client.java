@@ -442,19 +442,13 @@ public class Client {
 	}
 
 	public void print_statistic(int packages_received, int packages_lost, int gettimestamp) {
-		// Übertragenen Paketen: packages_received
-		// Paketverlusten: packages_lost
-		// Paketverlustrate: packages_received / (packages_received
-		// + packages_lost)
-		// Datenrate: packages_got / rtp.gettimestamp()
-
-		double package_loss_rate = 100. * (double) (packages_lost) / (packages_received + packages_lost);
+		double package_lost_rate = 100. * (double) (packages_lost) / (packages_received + packages_lost);
 		double package_rate = 1000. * (double) (packages_received) / gettimestamp;
 
 		String output = "";
 		output += String.format("Übertragenen Pakete: %d<br>", packages_received);
 		output += String.format("Verlorene Pakete: %d<br>", packages_lost);
-		output += String.format("Paketverlustrate: %.2f%%<br>", package_loss_rate);
+		output += String.format("Paketverlustrate: %.2f%%<br>", package_lost_rate);
 		output += String.format("Datenrate: %.2f Pakete/s<br>", package_rate);
 		statistic.setText("<html>" + output + "</html>");
 	}
@@ -472,10 +466,8 @@ public class Client {
 			// write the CSeq line:
 			RTSPBufferedWriter.write("CSeq: " + RTSPSeqNb + CRLF);
 
-			// check if request_type is equal to "SETUP" and in this case
-			// write
-			// the Transport: line advertising to the server the port used
-			// to
+			// check if request_type is equal to "SETUP" and in this case write
+			// the Transport: line advertising to the server the port used to
 			// receive the RTP packets RTP_RCV_PORT
 			if ((request_type).compareTo("SETUP") == 0) {
 				RTSPBufferedWriter.write("Transport: RTP/UDP; client_port= " + RTP_RCV_PORT + CRLF);
