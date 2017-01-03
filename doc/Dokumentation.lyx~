@@ -5,6 +5,31 @@
 \save_transient_properties true
 \origin unavailable
 \textclass article
+\begin_preamble
+%\usepackage{multicol}
+
+%Farben fuer Programmlisting
+\usepackage{listings,xcolor}
+\definecolor{pl_background}{rgb}{0.95,0.95,0.95}
+\definecolor{pl_comment}{rgb}{0.12, 0.38, 0.18 }
+\definecolor{pl_ifelse}{rgb}{0.74,0.74,.29}
+\definecolor{pl_keyword}{rgb}{0.37, 0.08, 0.25}
+\definecolor{pl_string}{rgb}{0.06, 0.10, 0.98}
+% Vordefiniertes Programmlisting
+\lstset{
+language = Java,
+basicstyle = \small\sffamily,
+backgroundcolor = \color{pl_background},
+stringstyle = \color{pl_string},
+keywordstyle = \color{pl_keyword}\bfseries,
+commentstyle = \color{pl_comment}\itshape,
+frame = lrbt,
+numbers = left,
+showstringspaces = false,
+breaklines = true,
+tabsize=4,
+xleftmargin = 15pt}
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -92,7 +117,6 @@ Klassendiagramme
 \begin_layout Enumerate
 Server
 \begin_inset listings
-lstparams "language=Java"
 inline false
 status open
 
