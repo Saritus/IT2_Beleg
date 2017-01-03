@@ -11,8 +11,8 @@ public class FECpacket {
 
 	private int lastSqNr = 0;
 
-	static int FEC_TYPE = 127;
-	static int FRAME_PERIOD = 40;
+	final static int FEC_TYPE = 127;
+	final static int FRAME_PERIOD = 40;
 
 	FECpacket(int k) {
 		reset();

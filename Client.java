@@ -68,7 +68,7 @@ public class Client {
 
 	// Video constants:
 	// ------------------
-	static int MJPEG_TYPE = 26; // RTP payload type for MJPEG video
+	final static int MJPEG_TYPE = 26; // RTP payload type for MJPEG video
 
 	// --------------------------
 	// Constructor
