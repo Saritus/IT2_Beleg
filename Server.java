@@ -64,7 +64,7 @@ public class Server extends JFrame implements ActionListener {
 
 	// FEC
 	FECpacket fecpacket;
-	int k = 20;
+	static int k = 20;
 
 	final static String CRLF = "\r\n";
 
