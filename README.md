@@ -18,6 +18,10 @@ als Ausfallschutz eine [Forward-Error-Correction (FEC)][fec] eingesetzt.
 
 ## Server
 
+Die Aufgabe des Servers ist es, aus den Frames einer `.mjpeg`-Datei sowohl
+RTP-Pakete als auch FEC-Pakete zu erzeugen und diese mittels eines
+Datagram-Sockets an den Client zu schicken.
+
 ## Client
 
 ![interface_client]
