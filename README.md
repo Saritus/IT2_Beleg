@@ -1,4 +1,4 @@
-# IT2_Beleg
+# IT2 Beleg
 
 ## Project
 
