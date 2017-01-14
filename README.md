@@ -8,6 +8,12 @@
 
 ## Project
 
+Bei dem Projekt handelt es sich um eine Client-Server-Anwendung, die mittels
+des Real-Time-Streaming-Protokolls (RTSP) eines Videostream überträgt. Dabei
+werden die eigentlichen Videodaten mittels des Real-Time-Protokolls (RTP)
+übertragen. Um den Einfluss von verlorengegangenen Paketen zu verringern, wird
+als Ausfallschutz eine Forward-Error-Correction (FEC) eingesetzt.
+
 ![classdiagram]
 
 ## Server
