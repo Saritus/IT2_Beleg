@@ -6,6 +6,8 @@
 
 [Aufgabenstellung][aufgabe]
 
+* * *
+
 ## Project
 
 Bei dem Projekt handelt es sich um eine Client-Server-Anwendung, die mittels des
@@ -16,11 +18,15 @@ als Ausfallschutz eine [Forward-Error-Correction (FEC)][fec] eingesetzt.
 
 ![classdiagram]
 
+* * *
+
 ## Server
 
 Die Aufgabe des Servers ist es, aus den Frames einer `.mjpeg`-Datei sowohl
 RTP-Pakete als auch FEC-Pakete zu erzeugen und diese mittels eines
 Datagram-Sockets an den Client zu schicken.
+
+* * *
 
 ## Client
 
@@ -30,6 +36,8 @@ schicken und empfangene JPEG-Bilder anzeigen. Zusätzlich zeigt er dem Nutzer
 Statistiken über die bisherigen Übertragungen an.
 
 ![interface_client]
+
+* * *
 
 ## RTPpacket
 
@@ -47,6 +55,8 @@ header[9] = (byte) ((Ssrc >> 16) & 0x000000FF);
 header[10] = (byte) ((Ssrc >> 8) & 0x000000FF);
 header[11] = (byte) (Ssrc & 0x000000FF);
 ```
+
+* * *
 
 ## FECpacket
 
