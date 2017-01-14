@@ -50,6 +50,12 @@ header[11] = (byte) (Ssrc & 0x000000FF);
 
 ## FECpacket
 
+Das FECpacket beinhaltet die Funktionen für die Forward-Error-Correction (FEC).
+
+#### Serverseite
+
+#### Clientseite
+
 [aufgabe]: Praktikum-Streaming.pdf
 
 [classdiagram]: /doc/img/classdiagram.png
