@@ -9,10 +9,10 @@
 ## Project
 
 Bei dem Projekt handelt es sich um eine Client-Server-Anwendung, die mittels
-des Real-Time-Streaming-Protokolls (RTSP) eines Videostream überträgt. Dabei
-werden die eigentlichen Videodaten mittels des Real-Time-Protokolls (RTP)
+des [Real-Time-Streaming-Protokolls (RTSP)][rtsp] eines Videostream überträgt. Dabei
+werden die eigentlichen Videodaten mittels des [Real-Time-Protokolls (RTP)][rtp]
 übertragen. Um den Einfluss von verlorengegangenen Paketen zu verringern, wird
-als Ausfallschutz eine Forward-Error-Correction (FEC) eingesetzt.
+als Ausfallschutz eine [Forward-Error-Correction (FEC)][fec] eingesetzt.
 
 ![classdiagram]
 
@@ -46,3 +46,9 @@ header[11] = (byte) (Ssrc & 0x000000FF);
 [classdiagram]: /doc/img/classdiagram.png
 
 [interface_client]: /doc/img/ui_client.png
+
+[rtsp]: http://www.ietf.org/rfc/rfc2326.txt
+
+[rtp]: http://www.ietf.org/rfc/rfc3550.txt
+
+[fec]: http://www.ietf.org/rfc/rfc5109.txt
