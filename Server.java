@@ -64,7 +64,7 @@ public class Server extends JFrame implements ActionListener {
 
 	// FEC
 	FECpacket fecpacket;
-	int k = 20;
+	static int k;
 
 	final static String CRLF = "\r\n";
 
@@ -120,6 +120,14 @@ public class Server extends JFrame implements ActionListener {
 
 		// get RTSP socket port from the command line
 		int RTSPport = Integer.parseInt(argv[0]);
+
+		try {
+			// get FEC_group from command line
+			k = Integer.parseInt(argv[1]);
+		} catch (Exception e) {
+			// couldnt get fec_group from command line
+			k = 2;
+		}
 
 		// Initiate TCP connection with the client for the RTSP session
 		ServerSocket listenSocket = new ServerSocket(RTSPport);
