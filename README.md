@@ -4,6 +4,8 @@
 
 `Author: Sebastian Mischke`
 
+[Aufgabenstellung][aufgabe]
+
 ## Project
 
 ![classdiagram]
@@ -37,3 +39,4 @@ header[11] = (byte) (Ssrc & 0x000000FF);
 
 [classdiagram]: /doc/img/classdiagram.png
 [interface_client]: /doc/img/ui_client.png
+[aufgabe]: Praktikum-Streaming.pdf
