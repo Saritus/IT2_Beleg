@@ -24,6 +24,11 @@ Datagram-Sockets an den Client zu schicken.
 
 ## Client
 
+Der Client ist die grafische Bedienoberfläche des Nutzer. Er kann eine
+Verbindung mit dem Server aufbauen, diesem Befehle wie z.B. `Play` oder `Pause`
+schicken und empfangene JPEG-Bilder anzeigen. Zusätzlich zeigt er dem Nutzer
+Statistiken über die bisherigen Übertragungen an.
+
 ![interface_client]
 
 ## RTPpacket
