@@ -61,6 +61,9 @@ header[11] = (byte) (Ssrc & 0x000000FF);
 ## FECpacket
 
 Das FECpacket beinhaltet die Funktionen für die Forward-Error-Correction (FEC).
+Zum einen erlaubt es dem Server ein RTP-Paket zu erstellen, welches die
+Informationen eines FEC-Paketes besitzt, zum anderen bietet es dem Client die
+Möglichkeit, ein verloren gegangenes RTP-Paket wiederherzustellen.
 
 #### Serverseite
 
