@@ -66,6 +66,20 @@ Das FECpacket beinhaltet die Funktionen für die Forward-Error-Correction (FEC).
 
 #### Clientseite
 
+```java
+int get_missing_nr() {
+  int next = this.to_frame - this.FEC_group;
+  for (int i = 0; i < rtp_nrs.size(); i++) {
+    if (rtp_nrs.get(i) == next + 1) {
+      next = rtp_nrs.get(i);
+    } else {
+      return next + 1;
+    }
+  }
+  return this.to_frame;
+}
+```
+
 [aufgabe]: Praktikum-Streaming.pdf
 
 [classdiagram]: /doc/img/classdiagram.png
