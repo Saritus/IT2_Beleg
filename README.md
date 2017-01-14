@@ -29,5 +29,8 @@ header[11] = (byte) (Ssrc & 0x000000FF);
 
 ## FECpacket
 
+`Author: Sebastian Mischke`
+Last modification: {{ file.mtime }}
+
 [classdiagram]: /doc/img/classdiagram.png
 [interface_client]: /doc/img/ui_client.png
