@@ -58,7 +58,15 @@ Möglichkeit, ein verloren gegangenes RTP-Paket wiederherzustellen.
 #### Serverseite
 
 Jedes mal, wenn der Server einen neuen Frame zum versenden vorbereitet, werden
-diese Bytes auch an das FECpacket gegeben. Das FECpacket verlängert zuerst, falls notwendig, die Länge des Byte-Puffers und verknüpft dann die bekommen Bytes des nächsten Frames und die bereits im FECpacket vorhandenen Bytes mittels `XOR`.
+diese Bytes auch an das FECpacket gegeben. Das FECpacket verlängert zuerst,
+falls notwendig, die Länge des Byte-Puffers und verknüpft dann die bekommen
+Bytes des nächsten Frames und die bereits im FECpacket vorhandenen Bytes mittels
+`XOR`.
+
+Wenn das FECpacket soviele Frames bekommen hat, wie vorher in der FEC_group
+festgelegt worden, dann wird ein neues UDP-Paket erstellt, welches die Daten des
+FECpacket enthält. Dabei wird die FEC_group als erstes Byte vor das Daten-Array
+gestellt. Anschließend wird das FECpacket resetet.
 
 #### Clientseite
 
