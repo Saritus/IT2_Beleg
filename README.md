@@ -12,8 +12,8 @@ werden die eigentlichen Videodaten mittels des [Real-Time-Protokolls (RTP)][rtp]
 übertragen. Um den Einfluss von verloren gegangenen Paketen zu verringern, wird
 als Ausfallschutz eine [Forward-Error-Correction (FEC)][fec] eingesetzt.
 
-Die Klasse `Server` stellt dabei das auf serverseite und die Klasse `Client` das
-lokal auszuführende Java-Programm dar.
+Die Klasse `Server` stellt dabei das serverseitig und die Klasse `Client` das
+clientseitig auszuführende Java-Programm dar.
 
 ![classdiagram]
 
