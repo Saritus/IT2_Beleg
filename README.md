@@ -128,19 +128,17 @@ gestellt. Anschließend wird das FECpacket resetet.
 
 ```java
 if (fecpacket.packages == k) {
-  // Create RTPpacket from FECpacket
+  // Create UDPpacket from FECpacket
   RTPpacket fec_packet = fecpacket.createRTPpacket(imagenb);
 
-  // Get data from RTPpacket
+  // Get data from UDPpacket
   int fec_length = fec_packet.getlength();
   byte[] fec_bits = new byte[fec_length];
   fec_packet.getpacket(fec_bits);
 
-  // Send RTPpacket
+  // Send UDPpacket
   senddp = new DatagramPacket(fec_bits, fec_length, ClientIPAddr, RTP_dest_port);
-  if (discard_slider.getValue() < (new Random().nextFloat() * 100.)) {
-    RTPsocket.send(senddp);
-  }
+  RTPsocket.send(senddp);
 
   // Create new FECpacket
   fecpacket = new FECpacket(k);
