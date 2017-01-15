@@ -54,7 +54,10 @@ Statistiken über die bisherigen Übertragungen an.
 
 ## RTPpacket
 
-Das RTPpacket beinhaltet die Daten eines Frames des Videos und besteht aus einem Byte-Array für den Header, welches über die META-Daten des Frames verfügt, und einem Byte-Array für den Payload, welches die Bytes für das `JPEG`-Bild beinhaltet.
+Das RTPpacket beinhaltet die Daten eines Frames des Videos und besteht aus einem
+Byte-Array für den Header, welches über die META-Daten des Frames verfügt, und
+einem Byte-Array für den Payload, welches die Bytes für das `JPEG`-Bild
+beinhaltet.
 
 ```java
 header[0] = (byte) ((Version << 6) | (Padding << 5) | (Extension << 4) | CC); // |VVPX|CCCC|
