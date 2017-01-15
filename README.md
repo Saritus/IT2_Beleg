@@ -64,6 +64,31 @@ diese Bytes auch an das FECpacket gegeben. Das FECpacket verlängert zuerst,
 falls notwendig, die Länge des Byte-Puffers und `XOR`-verknüpft die bekommen
 Bytes des nächsten Frames und die bereits im FECpacket vorhandenen Bytes.
 
+```java
+void xordata(byte[] data, int data_length) {
+  if (data_length > this.data.length) {
+
+    // Create new data-array
+    byte[] newdata = new byte[data_length];
+
+    // Fill the new data-array with the old data
+    for (int i = 0; i < this.data.length; i++) {
+      newdata[i] = this.data[i];
+    }
+
+    // Set newdata as this.data
+    this.data = newdata;
+    this.data_size = data_length;
+  }
+
+  // XOR param-data-array with new data-array
+  for (int i = 0; i < data_length; i++) {
+    this.data[i] = (byte) (this.data[i] ^ data[i]);
+  }
+  packages++;
+}
+```
+
 Wenn das FECpacket soviele Frames bekommen hat, wie vorher in der FEC_group
 festgelegt worden, dann wird ein neues UDP-Paket erstellt, welches die Daten des
 FECpacket enthält. Dabei wird die FEC_group als erstes Byte vor das Daten-Array
