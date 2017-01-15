@@ -22,6 +22,27 @@ Die Aufgabe des Servers ist es, aus den Frames einer `.mjpeg`-Datei sowohl
 RTP-Pakete als auch FEC-Pakete zu erzeugen und diese mittels eines
 Datagram-Sockets an den Client zu schicken.
 
+Das Auslesen der Frames erfolgt über die Klasse VideoStream, welche die JPEG-Bilder als Byte-Array an den Server zurückgibt. Aus diesem Byte-Array wird danach ein RTP-Paket erzeugt, welches anschließend zu einem DatagramPacket umgeformt und verschickt wird.
+
+```java
+int image_length = video.getnextframe(buf);
+
+// Builds an RTPpacket object containing the frame
+RTPpacket rtp_packet = new RTPpacket(MJPEG_TYPE, imagenb, imagenb * FRAME_PERIOD, buf, image_length);
+
+// get to total length of the full rtp packet to send
+int packet_length = rtp_packet.getlength();
+
+// retrieve the packet bitstream and store it in an array of bytes
+byte[] packet_bits = new byte[packet_length];
+rtp_packet.getpacket(packet_bits);
+
+// send the packet as a DatagramPacket over the UDP socket
+senddp = new DatagramPacket(packet_bits, packet_length, ClientIPAddr, RTP_dest_port);
+
+RTPsocket.send(senddp);
+```
+
 ## Client
 
 Der Client ist die grafische Bedienoberfläche des Nutzers. Er kann eine
