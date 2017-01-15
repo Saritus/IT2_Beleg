@@ -82,7 +82,7 @@ Möglichkeit, ein verloren gegangenes RTP-Paket wiederherzustellen.
 
 Jedes mal, wenn der Server einen neuen Frame zum versenden vorbereitet, werden
 diese Bytes auch an das FECpacket gegeben. Das FECpacket verlängert zuerst,
-falls notwendig, die Länge des Byte-Puffers und `XOR`-verknüpft die bekommen
+falls notwendig, die Länge des Byte-Puffers und XOR-verknüpft die bekommen
 Bytes des nächsten Frames und die bereits im FECpacket vorhandenen Bytes.
 
 ```java
@@ -143,7 +143,7 @@ Sequenznummer größer ist, als die Sequenznummer des letzten empfangenen Pakets
 Ist dies der Fall, wird es im FECpacket in einer ArrayList gespeichert.
 Zusätzlich wird dessen Sequenznummer in einer anderen ArrayList hinzugefügt und
 seine `Payload`-Daten werden mit den bereits im FECpacket vorhandenen Daten
-`XOR`-verknüpft.
+XOR-verknüpft.
 
 ```java
 void rcvdata(RTPpacket rtppacket) {
@@ -159,7 +159,7 @@ void rcvdata(RTPpacket rtppacket) {
 
 Erhält der Client ein FEC-Paket, so wird zunächst das erste Byte des
 Daten-Arrays als Größe der FEC_group genommen. Die restlichen Bytes werden mit
-den bereits im FECpacket vorhandenen Daten `XOR`-verknüpt. Anschließend wird
+den bereits im FECpacket vorhandenen Daten XOR-verknüpt. Anschließend wird
 geprüft, ob alle RTP-Pakete, die im "Zuständigkeitsbereich" des empfangenen
 FEC-Pakets liegen, vorhanden sind. Sollte genau ein RTP-Paket fehlen, so wird
 dieses aus den Daten, die sich momentan im FECpacket befinden, rekonstruiert und
