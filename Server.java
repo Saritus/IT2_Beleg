@@ -251,7 +251,9 @@ public class Server extends JFrame implements ActionListener {
 
 					// Send RTPpacket
 					senddp = new DatagramPacket(fec_bits, fec_length, ClientIPAddr, RTP_dest_port);
-					RTPsocket.send(senddp);
+					if (discard_slider.getValue() < (new Random().nextFloat() * 100.)) {
+						RTPsocket.send(senddp);
+					}
 
 					// Create new FECpacket
 					fecpacket = new FECpacket(k);
