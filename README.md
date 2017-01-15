@@ -90,6 +90,25 @@ void rcvdata(RTPpacket rtppacket) {
 ```
 
 ```java
+void rcvfec(RTPpacket rtp) {
+  // get FEC_group from first data element
+  FEC_group = rtp.payload[0];
+
+  // data is payload without first element
+  byte[] newdata = Arrays.copyOfRange(rtp.payload, 1, rtp.getpayload_length());
+  data_size = rtp.getpayload_length() - 1;
+  xordata(newdata, data_size);
+  
+  to_frame = rtp.getsequencenumber();
+
+  // check if last packages are complete
+  checkDisplaylist();
+
+  // reset data
+  reset();
+}
+```
+```java
 int get_missing_nr() {
   int next = this.to_frame - this.FEC_group;
   for (int i = 0; i < rtp_nrs.size(); i++) {
