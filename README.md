@@ -94,6 +94,27 @@ festgelegt worden, dann wird ein neues UDP-Paket erstellt, welches die Daten des
 FECpacket enthält. Dabei wird die FEC_group als erstes Byte vor das Daten-Array
 gestellt. Anschließend wird das FECpacket resetet.
 
+```java
+if (fecpacket.packages == k) {
+  // Create RTPpacket from FECpacket
+  RTPpacket fec_packet = fecpacket.createRTPpacket(imagenb);
+
+  // Get data from RTPpacket
+  int fec_length = fec_packet.getlength();
+  byte[] fec_bits = new byte[fec_length];
+  fec_packet.getpacket(fec_bits);
+
+  // Send RTPpacket
+  senddp = new DatagramPacket(fec_bits, fec_length, ClientIPAddr, RTP_dest_port);
+  if (discard_slider.getValue() < (new Random().nextFloat() * 100.)) {
+    RTPsocket.send(senddp);
+  }
+
+  // Create new FECpacket
+  fecpacket = new FECpacket(k);
+}
+```
+
 #### Clientseite
 
 Wenn im Client ein RTP-Paket ankommt, wird zunächst geprüft, ob seine
