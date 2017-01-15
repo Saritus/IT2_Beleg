@@ -126,7 +126,7 @@ public class Server extends JFrame implements ActionListener {
 			k = Integer.parseInt(argv[1]);
 		} catch (Exception e) {
 			// couldnt get fec_group from command line
-			k = 2;
+			k = 10;
 		}
 
 		// Initiate TCP connection with the client for the RTSP session
