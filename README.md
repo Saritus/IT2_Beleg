@@ -70,6 +70,25 @@ gestellt. Anschließend wird das FECpacket resetet.
 
 #### Clientseite
 
+Wenn im Client ein RTP-Paket ankommt, wird zunächst geprüft, ob seine
+Sequenznummer größer ist, als die Sequenznummer des letzten empfangenen Pakets.
+Ist dies der Fall, wird es im FECpacket in einer ArrayList gespeichert.
+Zusätzlich wird dessen Sequenznummer in einer anderen ArrayList hinzugefügt und
+seine `Payload`-Daten werden mit den bereits im FECpacket vorhandenen Daten
+mittels `XOR` verknüpft.
+
+```java
+void rcvdata(RTPpacket rtppacket) {
+  if (rtppacket.getsequencenumber() > lastSqNr) {
+    rtp_nrs.add(rtppacket.getsequencenumber());
+    displayPackages.add(rtppacket);
+    packages++;
+    xordata(rtppacket);
+    lastSqNr = rtppacket.getsequencenumber();
+  }
+}
+```
+
 ```java
 int get_missing_nr() {
   int next = this.to_frame - this.FEC_group;
