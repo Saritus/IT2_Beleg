@@ -108,6 +108,51 @@ void rcvfec(RTPpacket rtp) {
   reset();
 }
 ```
+
+```java
+private boolean checkDisplaylist() {
+  if (rtp_nrs.size() == this.FEC_group) {
+    // Got all packages
+    return true;
+
+  } else if (rtp_nrs.size() < this.FEC_group - 1) {
+    // Lost more than one package (not reversable)
+    return false;
+
+  } else {
+    // Lost exaclty one package (reversable)
+
+    // get missing packages in RTPpackages
+    int missingnr = get_missing_nr();
+    byte[] missingdata = get_missing_data();
+
+    // restore missing package
+    RTPpacket missingpacket = new RTPpacket(26, missingnr, 0, missingdata, missingdata.length);
+
+    // create empty temp list
+    List<RTPpacket> tmp = new ArrayList<>();
+
+    // remove bigger packages than missingpackage
+    while ((displayPackages.size() > 0)
+        && (displayPackages.get(displayPackages.size() - 1).getsequencenumber() > missingnr)) {
+      tmp.add(0, displayPackages.get(displayPackages.size() - 1));
+      displayPackages.remove(displayPackages.size() - 1);
+    }
+
+    // add missingpacket at right position
+    displayPackages.add(missingpacket);
+
+    // add elements in tmp to displaypackages
+    while (tmp.size() > 0) {
+      displayPackages.add(tmp.get(0));
+      tmp.remove(0);
+    }
+
+    return true;
+  }
+}
+```
+
 ```java
 int get_missing_nr() {
   int next = this.to_frame - this.FEC_group;
