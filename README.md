@@ -1,6 +1,7 @@
 # IT2 Beleg
 
 `Autor: Sebastian Mischke`
+
 `s-Nummer: s72682`
 
 [Aufgabenstellung][aufgabe]
