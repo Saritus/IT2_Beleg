@@ -57,6 +57,9 @@ Möglichkeit, ein verloren gegangenes RTP-Paket wiederherzustellen.
 
 #### Serverseite
 
+Jedes mal, wenn der Server einen neuen Frame zum versenden vorbereitet, werden
+diese Bytes auch an das FECpacket gegeben. Das FECpacket verlängert zuerst, falls notwendig, die Länge des Byte-Puffers und verknüpft dann die bekommen Bytes des nächsten Frames und die bereits im FECpacket vorhandenen Bytes mittels `XOR`.
+
 #### Clientseite
 
 ```java
