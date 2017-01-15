@@ -115,7 +115,7 @@ public class Server extends JFrame implements ActionListener {
 
 		// show GUI:
 		theServer.pack();
-		theServer.setSize(300, 100); // TODO: check for better method
+		theServer.setSize(300, 100);
 		theServer.setVisible(true);
 
 		// get RTSP socket port from the command line
