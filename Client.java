@@ -344,7 +344,7 @@ public class Client {
 					lastSequencenumber = rtp_packet.getsequencenumber();
 
 					// print statistics
-					if (rtp_packet.gettimestamp() >= lasttimestamp + 10) { //
+					if (rtp_packet.gettimestamp() >= lasttimestamp + 1000) { //
 						print_statistic(rtp_packet.gettimestamp());
 						lasttimestamp = rtp_packet.gettimestamp();
 					}
