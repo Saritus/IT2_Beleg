@@ -50,6 +50,11 @@ Verbindung mit dem Server aufbauen, diesem Befehle wie z.B. `Play` oder `Pause`
 schicken und empfangene JPEG-Bilder anzeigen. Zusätzlich zeigt er dem Nutzer
 Statistiken über die bisherigen Übertragungen an.
 
+Im Client existieren zwei Timer. Zum einen der Listener-Timer, der die Pakete
+des Servers empfängt und auswertet. Zum anderen der Display-Timer, der die
+empfangenen JPEG-Bilder auf der Benutzeroberfläche anzeigt und die Statistik
+aktualisiert.
+
 ![interface_client]
 
 ## RTPpacket
