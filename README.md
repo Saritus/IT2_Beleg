@@ -1,7 +1,5 @@
 # IT2 Beleg
 
-## Information
-
 `Author: Sebastian Mischke`
 
 [Aufgabenstellung][aufgabe]
