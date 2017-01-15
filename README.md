@@ -197,9 +197,9 @@ void rcvfec(RTPpacket rtp) {
 
 [aufgabe]: Praktikum-Streaming.pdf
 
-[classdiagram]: /doc/img/classdiagram.png
+[classdiagram]: https://github.com/Saritus/IT2_Beleg/raw/master/doc/img/classdiagram.png
 
-[interface_client]: /doc/img/ui_client.png
+[interface_client]: https://github.com/Saritus/IT2_Beleg/raw/master/doc/img/ui_client.png
 
 [rtsp]: http://www.ietf.org/rfc/rfc2326.txt
 
