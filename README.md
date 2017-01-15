@@ -23,7 +23,7 @@ Die Aufgabe des Servers ist es, aus den Frames einer mjpeg-Datei sowohl
 RTP-Pakete als auch FEC-Pakete zu erzeugen und diese mittels eines
 Datagram-Sockets an den Client zu schicken.
 
-Das Auslesen der Frames erfolgt über die Klasse VideoStream, welche die JPEG-Bilder als Byte-Array an den Server zurückgibt. Aus diesem Byte-Array wird danach ein RTP-Paket erzeugt, welches anschließend zu einem DatagramPacket umgeformt und verschickt wird.
+Das Auslesen der Frames erfolgt über die Klasse `VideoStream`, welche die JPEG-Bilder als Byte-Array an den Server zurückgibt. Aus diesem Byte-Array wird danach ein RTP-Paket erzeugt, welches anschließend zu einem DatagramPacket umgeformt und verschickt wird.
 
 ```java
 int image_length = video.getnextframe(buf);
