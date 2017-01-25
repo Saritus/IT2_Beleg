@@ -90,7 +90,6 @@ public class FECpacket {
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
 	void rcvdata(RTPpacket rtppacket) {
 		if (rtppacket.getsequencenumber() > lastSqNr) {
-			rtp_nrs.add(rtppacket.getsequencenumber());
 			displayPackages.add(rtppacket);
 			packages++;
 			lastSqNr = rtppacket.getsequencenumber();
@@ -143,6 +142,13 @@ public class FECpacket {
 	}
 
 	private boolean checkDisplaylist() {
+
+		for (int i = 0; i < displayPackages.size(); i++) {
+			if (displayPackages.get(i).getsequencenumber() > this.to_frame - this.FEC_group) {
+				rtp_nrs.add(displayPackages.get(i).getsequencenumber());
+			}
+		}
+
 		if (rtp_nrs.size() == this.FEC_group) {
 			// Got all packages
 			return true;
