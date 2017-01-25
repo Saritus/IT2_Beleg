@@ -57,6 +57,7 @@ public class Client {
 	// statistics
 	int packages_received = 0; // amount of packages received
 	int packages_lost = 0; // amount of packages lost
+	int packages_restored = 0;
 	int lastSequencenumber = 0; // seqnr of last package received
 	int lasttimestamp = 0;
 	// fec
@@ -361,7 +362,9 @@ public class Client {
 					// rtp_packet.printheader();
 
 					// add fec packet information
-					fec_packet.rcvfec(rtp_packet);
+					if (fec_packet.rcvfec(rtp_packet)) {
+						packages_restored++;
+					}
 				}
 			} catch (InterruptedIOException iioe) {
 				// System.out.println("Nothing to read");
@@ -448,6 +451,7 @@ public class Client {
 		output += String.format("Verlorene Pakete: %d<br>", packages_lost);
 		output += String.format("Paketverlustrate: %.2f%%<br>", package_lost_rate);
 		output += String.format("Datenrate: %.2f Pakete/s<br>", package_rate);
+		output += String.format("Wiederhergestellte Pakete: %d<br>", packages_restored);
 		statistic.setText("<html>" + output + "</html>");
 	}
 

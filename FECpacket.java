@@ -90,10 +90,8 @@ public class FECpacket {
 	// Puffergröße sollte Vielfaches der Gruppengröße sein
 	void rcvdata(RTPpacket rtppacket) {
 		if (rtppacket.getsequencenumber() > lastSqNr) {
-			rtp_nrs.add(rtppacket.getsequencenumber());
 			displayPackages.add(rtppacket);
 			packages++;
-			xordata(rtppacket);
 			lastSqNr = rtppacket.getsequencenumber();
 		}
 	}
@@ -114,11 +112,17 @@ public class FECpacket {
 	}
 
 	byte[] get_missing_data() {
+		for (int i = 0; i < displayPackages.size(); i++) {
+			if (displayPackages.get(i).getsequencenumber() > this.to_frame - this.FEC_group) {
+				xordata(displayPackages.get(i));
+			}
+		}
 		return this.data;
 	}
 
-	void rcvfec(RTPpacket rtp) {
+	boolean rcvfec(RTPpacket rtp) {
 		// System.out.println(rtp.getsequencenumber());
+		boolean restored;
 
 		// get FEC_group from first data element
 		FEC_group = rtp.payload[0];
@@ -132,16 +136,25 @@ public class FECpacket {
 		to_frame = rtp.getsequencenumber();
 
 		// check if last packages are complete
-		checkDisplaylist();
+		restored = checkDisplaylist();
 
 		// reset data
 		reset();
+
+		return restored;
 	}
 
 	private boolean checkDisplaylist() {
+
+		for (int i = 0; i < displayPackages.size(); i++) {
+			if (displayPackages.get(i).getsequencenumber() > this.to_frame - this.FEC_group) {
+				rtp_nrs.add(displayPackages.get(i).getsequencenumber());
+			}
+		}
+
 		if (rtp_nrs.size() == this.FEC_group) {
 			// Got all packages
-			return true;
+			return false;
 
 		} else if (rtp_nrs.size() < this.FEC_group - 1) {
 			// Lost more than one package (not reversable)
