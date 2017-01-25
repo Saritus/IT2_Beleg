@@ -93,7 +93,6 @@ public class FECpacket {
 			rtp_nrs.add(rtppacket.getsequencenumber());
 			displayPackages.add(rtppacket);
 			packages++;
-			xordata(rtppacket);
 			lastSqNr = rtppacket.getsequencenumber();
 		}
 	}
@@ -114,6 +113,11 @@ public class FECpacket {
 	}
 
 	byte[] get_missing_data() {
+		for (int i = 0; i < displayPackages.size(); i++) {
+			if (displayPackages.get(i).getsequencenumber() > this.to_frame - this.FEC_group) {
+				xordata(displayPackages.get(i));
+			}
+		}
 		return this.data;
 	}
 
