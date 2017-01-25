@@ -120,8 +120,9 @@ public class FECpacket {
 		return this.data;
 	}
 
-	void rcvfec(RTPpacket rtp) {
+	boolean rcvfec(RTPpacket rtp) {
 		// System.out.println(rtp.getsequencenumber());
+		boolean restored;
 
 		// get FEC_group from first data element
 		FEC_group = rtp.payload[0];
@@ -135,10 +136,12 @@ public class FECpacket {
 		to_frame = rtp.getsequencenumber();
 
 		// check if last packages are complete
-		checkDisplaylist();
+		restored = checkDisplaylist();
 
 		// reset data
 		reset();
+
+		return restored;
 	}
 
 	private boolean checkDisplaylist() {
@@ -151,7 +154,7 @@ public class FECpacket {
 
 		if (rtp_nrs.size() == this.FEC_group) {
 			// Got all packages
-			return true;
+			return false;
 
 		} else if (rtp_nrs.size() < this.FEC_group - 1) {
 			// Lost more than one package (not reversable)
